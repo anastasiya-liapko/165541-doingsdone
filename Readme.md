@@ -1,7 +1,7 @@
 # Личный проект «Дела в Порядке»
 
 * Студент: [Anastasiya Liapko](https://up.htmlacademy.ru/php/5/user/165541).
-* Наставник: `Неизвестно`.
+* Наставник: [Михаил Куприянов](https://up.htmlacademy.ru/php/5/user/541075).
 
 ---
 
