@@ -36,6 +36,21 @@ $tasks = [
      "done" => "Нет"
     ]
 ];
+
+function count_tasks($match, $array) {
+    $count = 0;
+    if ($match == "Все") {
+        $count = count($array);
+    }
+    foreach ($array as $index => $arr) {
+        foreach ($arr as $i => $item) {
+            if ($item == $match) {
+                $count++;
+            }
+        }
+    }
+    return $count;
+};
 ?>
 
 <!DOCTYPE html>
@@ -86,7 +101,7 @@ $tasks = [
                         <?php foreach ($projects as $i => $item): ?>
                         <li class="main-navigation__list-item  <?= $i == 0 ? "main-navigation__list-item--active" : "" ?>">
                             <a class="main-navigation__list-item-link" href="#"><?=$item?></a>
-                            <span class="main-navigation__list-item-count"></span>
+                            <span class="main-navigation__list-item-count"><?= count_tasks($item, $tasks) ?></span>
                         </li>
                         <?php $i = $i + 1; ?>
                         <?php endforeach; ?>
