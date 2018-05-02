@@ -1,5 +1,4 @@
 <?php
-// показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 
 $projects = ["Все", "Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
@@ -37,14 +36,14 @@ $tasks = [
     ]
 ];
 
-function count_tasks($match, $array) {
+function count_tasks($match, $tasks) {
     $count = 0;
     if ($match == "Все") {
-        $count = count($array);
+        $count = count($tasks);
     }
-    foreach ($array as $index => $arr) {
-        foreach ($arr as $i => $item) {
-            if ($item == $match) {
+    if ($match !== "Все") {
+        foreach ($tasks as $index => $item) {
+            if ($item["category"] == $match) {
                 $count++;
             }
         }
