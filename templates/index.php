@@ -16,15 +16,15 @@
 
     <label class="checkbox">
         <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
-        <input class="checkbox__input visually-hidden show_completed" type="checkbox" <?= $data["show_complete_tasks"] == 1 ? "checked" : "" ?>>
+        <input class="checkbox__input visually-hidden show_completed" type="checkbox" <?= $show_complete_tasks == 1 ? "checked" : "" ?>>
         <span class="checkbox__text">Показывать выполненные</span>
     </label>
 </div>
 
 <table class="tasks">
-    <?php foreach ($data["tasks"] as $key => $item): ?>
+    <?php foreach ($tasks as $key => $item): ?>
     <tr class="tasks__item task <?= $item["done"] == "Да" ? "task--completed" : "" ?>">
-        <?php if ($data["show_complete_tasks"] == 1): ?>
+        <?php if ($show_complete_tasks == 1): ?>
         <td class="task__select">
             <label class="checkbox task__checkbox">
                 <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
@@ -39,7 +39,7 @@
         <td class="task__date"><?=$item["date"];?></td>
         <?php endif; ?>
 
-        <?php if ($data["show_complete_tasks"] == 0 && $item["done"] == "Нет"): ?>
+        <?php if ($show_complete_tasks == 0 && $item["done"] == "Нет"): ?>
         <td class="task__select">
             <label class="checkbox task__checkbox">
                 <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">

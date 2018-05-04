@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title><?= $data["title"]; ?></title>
+    <title><?= $title; ?></title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flatpickr.min.css">
@@ -43,10 +43,10 @@
 
                 <nav class="main-navigation">
                     <ul class="main-navigation__list">
-                        <?php foreach ($data["projects"] as $i => $item): ?>
+                        <?php foreach ($projects as $i => $item): ?>
                         <li class="main-navigation__list-item  <?= $i == 0 ? "main-navigation__list-item--active" : "" ?>">
                             <a class="main-navigation__list-item-link" href="#"><?=$item?></a>
-                            <span class="main-navigation__list-item-count"><?= count_tasks($item, $data["tasks"]) ?></span>
+                            <span class="main-navigation__list-item-count"><?= count_tasks($item, $tasks) ?></span>
                         </li>
                         <?php $i = $i + 1; ?>
                         <?php endforeach; ?>
@@ -57,7 +57,7 @@
                    href="javascript:;" target="project_add">Добавить проект</a>
             </section>
 
-            <main class="content__main"><?= $data["content"]; ?></main>
+            <main class="content__main"><?= $content; ?></main>
         </div>
     </div>
 </div>

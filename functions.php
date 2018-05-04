@@ -16,11 +16,7 @@ function count_tasks($match, $tasks) {
 
 function include_template($template, $data) {
     if (file_exists($template)) {
-        // $show_complete_tasks = $data["show_complete_tasks"];
-        // $tasks = $data["tasks"];
-        // $content = $data["content"];
-        // $projects = $data["projects"];
-        // $title = $data["title"];
+        extract($data);
         ob_start();
         require $template;
         $html = ob_get_contents();
