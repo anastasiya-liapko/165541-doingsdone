@@ -23,7 +23,8 @@
 
 <table class="tasks">
     <?php foreach ($tasks as $key => $item): ?>
-    <tr class="tasks__item task <?= $item["done"] == "Да" ? "task--completed" : "" ?>">
+    <tr class="tasks__item task <?= $item["done"] == "Да" ? "task--completed" : "" ?>
+    <?= check_important_tasks($item["date"]) <= 24 && $item["done"] !== "Да" ? "task--important" : "" ?>">
         <?php if ($show_complete_tasks == 1): ?>
         <td class="task__select">
             <label class="checkbox task__checkbox">
