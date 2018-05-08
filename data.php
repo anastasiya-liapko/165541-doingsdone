@@ -1,5 +1,5 @@
 <?php
-$show_complete_tasks = rand(0, 1);
+$showCompleteTasks = rand(0, 1);
 
 $projects = ["Все", "Входящие", "Учеба", "Работа", "Домашние дела", "Авто"];
 

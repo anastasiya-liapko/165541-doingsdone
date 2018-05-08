@@ -16,7 +16,7 @@
 
     <label class="checkbox">
         <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
-        <input class="checkbox__input visually-hidden show_completed" type="checkbox" <?= $show_complete_tasks == 1 ? "checked" : "" ?>>
+        <input class="checkbox__input visually-hidden show_completed" type="checkbox" <?= $showCompleteTasks == 1 ? "checked" : "" ?>>
         <span class="checkbox__text">Показывать выполненные</span>
     </label>
 </div>
@@ -24,8 +24,8 @@
 <table class="tasks">
     <?php foreach ($tasks as $key => $item): ?>
     <tr class="tasks__item task <?= $item["done"] == "Да" ? "task--completed" : "" ?>
-    <?= check_important_tasks($item["date"]) <= 24 && $item["done"] !== "Да" ? "task--important" : "" ?>">
-        <?php if ($show_complete_tasks == 1): ?>
+    <?= getHoursCountTillTheDate($item["date"]) <= 24 && $item["done"] !== "Да" ? "task--important" : "" ?>">
+        <?php if ($showCompleteTasks == 1): ?>
         <td class="task__select">
             <label class="checkbox task__checkbox">
                 <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
@@ -40,7 +40,7 @@
         <td class="task__date"><?=$item["date"];?></td>
         <?php endif; ?>
 
-        <?php if ($show_complete_tasks == 0 && $item["done"] == "Нет"): ?>
+        <?php if ($showCompleteTasks == 0 && $item["done"] == "Нет"): ?>
         <td class="task__select">
             <label class="checkbox task__checkbox">
                 <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">

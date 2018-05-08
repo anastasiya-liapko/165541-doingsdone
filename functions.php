@@ -1,46 +1,56 @@
 <?php
+define("PROJECT_ALL", "Все");
+define("SECS_IN_HOUR", 3600);
+
 /**
- * Функция подсчета задач
- * @param string $match название проекта
- * @param array $tasks список всех задач в виде массива
- * @return integer число задач для переданного проекта
+ * Возвращает количество задач по имени проекта
+ *
+ * @param array $tasks Массив задач (строк)
+ * @param string $projectName Название проекта, по-умолчанию - "Все"
+ * @return int Количество задач
  */
-function count_tasks($match, $tasks) {
-    $count = 0;
-    if ($match == "Все") {
-        $count = count($tasks);
+function getTasksCountByProjectName(string $projectName = PROJECT_ALL, array $tasks = []): int
+{
+    if (PROJECT_ALL == $projectName) {
+        return count($tasks);
     }
-    if ($match !== "Все") {
-        foreach ($tasks as $index => $item) {
-            if ($item["category"] == $match) {
-                $count++;
-            }
+
+    $result = 0;
+
+    foreach ($tasks as $task) {
+        if ($projectName == $task["category"]) {
+            $result++;
         }
     }
-    return $count;
+
+    return $result;
 };
 
 /**
- * Функция подсчета часов
- * @param string $time дата завершения задачи
- * @return integer оставшееся количество часов до каждой из имеющихся дат
+ * Возвращает количество часов, оставшееся до каждой из дат
+ *
+ * @param string $date дата завершения задачи
+ * @return integer количество часов
  */
-function check_important_tasks($time) {
-    $secs_in_hour = 3600;
+function getHoursCountTillTheDate(string $date): int
+{
     $ts = time();
-    $end_ts = strtotime($time);
-    $ts_diff = $end_ts - $ts;
-    $hours_until_end = floor($ts_diff / $secs_in_hour);
-    return $hours_until_end;
+    $endTs = strtotime($date);
+    $tsDiff = $endTs - $ts;
+    $hoursUntilEnd = floor($tsDiff / SECS_IN_HOUR);
+
+    return $hoursUntilEnd;
 };
 
 /**
  * Функция отрисовки шаблона с данными
+ *
  * @param string $template относительный путь к шаблону, например templates/index.php
  * @param array $data упакованный массив с даными для шаблона для передачи в extract()
  * @return string html-код шаблона
  */
-function include_template($template, $data) {
+function includeTemplate(string $template, array $data = []): string
+{
     if (file_exists($template)) {
         extract($data);
         ob_start();
@@ -50,5 +60,6 @@ function include_template($template, $data) {
     } else {
         $html = "";
     }
+
     return $html;
-}
+};
