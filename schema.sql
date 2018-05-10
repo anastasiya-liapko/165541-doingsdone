@@ -18,7 +18,10 @@ CREATE UNIQUE INDEX email ON `users`(`email`);
 CREATE TABLE `projects` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `project_name` CHAR(64),
-    `user_id` INT
+    `user_id` INT,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );
 
 CREATE TABLE `tasks` (
@@ -28,6 +31,13 @@ CREATE TABLE `tasks` (
     `task_name` CHAR(64),
     `task_file` CHAR(128),
     `term` DATETIME,
+    `done` CHAR(8),
     `project_id` INT,
-    `user_id` INT
+    `user_id` INT,
+    FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
 );

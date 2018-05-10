@@ -12,18 +12,18 @@ INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Домашние де�
 INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Авто', 1);
 -- SELECT * FROM `projects`;
 
-INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `project_id`, `user_id`)
-    VALUES(NULL, NULL, 'Собеседование в IT компании', NULL, '2018.06.01', 4, 1);
-INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `project_id`, `user_id`)
-    VALUES(NULL, NULL, 'Выполнить тестовое задание', NULL, '2018.05.25', 4, 1);
-INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `project_id`, `user_id`)
-    VALUES(NULL, NULL, 'Сделать задание первого раздела', NULL, '2018.04.21', 3, 1);
-INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `project_id`, `user_id`)
-    VALUES(NULL, NULL, 'Встреча с другом', NULL, '2018.04.22', 2, 1);
-INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `project_id`, `user_id`)
-    VALUES(NULL, NULL, 'Купить корм для кота', NULL, NULL, 5, 1);
-INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `project_id`, `user_id`)
-    VALUES(NULL, NULL, 'Заказать пиццу', NULL, NULL, 5, 1);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `done`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Собеседование в IT компании', NULL, '2018.06.01', 'Нет', 4, 1);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `done`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Выполнить тестовое задание', NULL, '2018.05.25', 'Нет', 4, 1);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `done`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Сделать задание первого раздела', NULL, '2018.04.21', 'Да', 3, 1);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `done`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Встреча с другом', NULL, '2018.04.22', 'Нет', 2, 1);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `done`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Купить корм для кота', NULL, NULL, 'Нет', 5, 1);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term`, `done`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Заказать пиццу', NULL, NULL, 'Нет', 5, 1);
 -- SELECT * FROM `tasks`;
 
 
@@ -34,7 +34,7 @@ SELECT * FROM `projects` WHERE `user_id` = 1;
 SELECT * FROM `tasks` WHERE `project_id` = 4;
 
 -- пометить задачу как выполненную
-INSERT INTO `tasks`(`id`, `done`) VALUES(3, 'Да');
+UPDATE `tasks` SET `done` = 'Да' WHERE `id` = 5;
 
 -- получить все задачи для завтрашнего дня
 SELECT * FROM `tasks` WHERE TO_DAYS(`term`) - TO_DAYS(NOW()) BETWEEN 0 AND 1;
