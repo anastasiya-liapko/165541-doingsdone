@@ -41,3 +41,4 @@ SELECT * FROM `tasks` WHERE TO_DAYS(`term`) - TO_DAYS(NOW()) BETWEEN 0 AND 1;
 
 -- обновить название задачи по её идентификатору
 UPDATE `tasks` SET `task_name` = 'Купить корм для кота Whiskas' WHERE `id` = 5;
+
