@@ -1,16 +1,16 @@
 <?php
 require_once("functions.php");
-require_once('data.php');
+require_once("data.php");
 
-$page_content = include_template("templates/index.php", [
-    "show_complete_tasks" => $show_complete_tasks,
+$pageContent = includeTemplate("templates/index.php", [
+    "showCompleteTasks" => $showCompleteTasks,
     "tasks" => $tasks
 ]);
-$layout_content = include_template("templates/layout.php", [
-	"content" => $page_content,
+$layoutContent = includeTemplate("templates/layout.php", [
+	"content" => $pageContent,
     "projects" => $projects,
     "tasks" => $tasks,
 	"title" => "Дела в порядке"
 ]);
 
-print($layout_content);
+print($layoutContent);
