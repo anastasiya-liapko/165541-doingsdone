@@ -27,11 +27,10 @@ CREATE TABLE `projects` (
 CREATE TABLE `tasks` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `creation_date` DATE,
-    `completion_date` DATE,
+    `done` CHAR(8),
     `task_name` CHAR(64),
     `task_file` CHAR(128),
     `term` DATETIME,
-    `done` CHAR(8),
     `project_id` INT,
     `user_id` INT,
     FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`)
