@@ -30,8 +30,7 @@ CREATE TABLE `tasks` (
     `completion_date` DATE,
     `task_name` CHAR(64),
     `task_file` CHAR(128),
-    `term` DATETIME,
-    `done` CHAR(8),
+    `term_date` DATE,
     `project_id` INT,
     `user_id` INT,
     FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`)
