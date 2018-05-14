@@ -57,7 +57,9 @@
                    href="javascript:;" target="project_add">Добавить проект</a>
             </section>
 
-            <main class="content__main"><?= $content; ?></main>
+            <main class="content__main"><?= $content; ?>
+                <?=includeTemplate("templates/index.php", ["tasksByProject" => $tasksByProject, "showCompleteTasks" => $showCompleteTasks]); ?>
+            </main>
         </div>
     </div>
 </div>

@@ -11,6 +11,10 @@ INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Учеба', 1);
 INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Работа', 1);
 INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Домашние дела', 1);
 INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Авто', 1);
+INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Входящие', 2);
+INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Учеба', 2);
+INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Работа', 2);
+INSERT INTO `projects`(`project_name`, `user_id`) VALUES('Домашние дела', 2);
 -- SELECT * FROM `projects`;
 
 INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term_date`, `project_id`, `user_id`)
@@ -25,6 +29,10 @@ INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`
     VALUES(NULL, NULL, 'Купить корм для кота', NULL, NULL, 4, 1);
 INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term_date`, `project_id`, `user_id`)
     VALUES(NULL, NULL, 'Заказать пиццу', NULL, NULL, 4, 1);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term_date`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Собеседование в IT компании', NULL, '2018-06-01', 3, 2);
+INSERT INTO `tasks`(`creation_date`, `completion_date`, `task_name`, `task_file`, `term_date`, `project_id`, `user_id`)
+    VALUES(NULL, NULL, 'Встреча с другом', NULL, '2018-04-22', 1, 2);
 -- SELECT * FROM `tasks`;
 
 

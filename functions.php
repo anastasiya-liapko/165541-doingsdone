@@ -18,7 +18,7 @@ function getTasksCountByProjectName(string $projectName = PROJECT_ALL, array $ta
     $result = 0;
 
     foreach ($tasks as $task) {
-        if ($projectName == $task["category"]) {
+        if ($projectName == $task["project_name"]) {
             $result++;
         }
     }
@@ -29,17 +29,18 @@ function getTasksCountByProjectName(string $projectName = PROJECT_ALL, array $ta
 /**
  * Возвращает количество часов, оставшееся до каждой из дат
  *
- * @param string $date дата завершения задачи
- * @return integer количество часов
+ * @param $date дата завершения задачи
+ * @return количество часов
  */
-function getHoursCountTillTheDate(string $date): int
+function getHoursCountTillTheDate($date)
 {
-    $ts = time();
-    $endTs = strtotime($date);
-    $tsDiff = $endTs - $ts;
-    $hoursUntilEnd = floor($tsDiff / SECS_IN_HOUR);
-
-    return $hoursUntilEnd;
+    if ($date !== NULL) {
+        $ts = time();
+        $endTs = strtotime($date);
+        $tsDiff = $endTs - $ts;
+        $hoursUntilEnd = floor($tsDiff / SECS_IN_HOUR);
+        return $hoursUntilEnd;
+    }
 };
 
 /**
