@@ -1,44 +1,27 @@
 <?php
 require_once("functions.php");
+require_once("init.php");
 require_once("data.php");
 
-$link = mysqli_connect("localhost", "root", "11111111", "doingsdone-165541");
-mysqli_set_charset($link, "utf8");
+$user = 1;
+$project = 1;
 
 if (!$link) {
     $error = mysqli_connect_error();
     $content = includeTemplate("templates/error.php", ["error" => $error]);
 } else {
-    $sql = "SELECT `project_name` FROM `projects` WHERE `user_id` = 1";
-
-    if ($res = mysqli_query($link, $sql)) {
-        $projectsList = mysqli_fetch_all($res, MYSQLI_ASSOC);
-        $projects = [];
-        foreach ($projectsList as $i => $project) {
-            $projects[$i] = $project["project_name"];
-        }
-    } else {
+    $projects = getProjectsListForUser($link, $user);
+    if (!$projects) {
         $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
     }
 
-    $sql = "SELECT `task_name`, `completion_date`, `term_date`, `project_name` FROM `tasks`
-        JOIN `projects` ON `tasks`.`project_id` = `projects`.`id` WHERE `tasks`.`user_id` = 1 ORDER BY `completion_date` ASC";
-
-    if ($res = mysqli_query($link, $sql)) {
-        $tasks = mysqli_fetch_all($res, MYSQLI_ASSOC);
-        $pageContent = includeTemplate("templates/index.php", ["tasks" => $tasks]);
-    } else {
+    $tasks = getTasksListForUser($link, $user);
+    if (!$tasks) {
         $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
     }
 
-    $sql = "SELECT `task_name`, `completion_date`, `term_date`, `project_id`
-        FROM `tasks` WHERE `project_id` = 1 AND `user_id` = 1";
-
-    if ($res = mysqli_query($link, $sql)) {
-        $tasksByProject = mysqli_fetch_all($res, MYSQLI_ASSOC);
-        print_r($tasksByProjects);
-        $pageContent = includeTemplate("templates/index.php", ["tasksByProject" => $tasksByProject]);
-    } else {
+    $tasksByProject = getTasksListForProject($link, $user, $project);
+    if (!$tasksByProject) {
         $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
     }
 }

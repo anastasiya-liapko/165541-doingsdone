@@ -64,3 +64,65 @@ function includeTemplate(string $template, array $data = []): string
 
     return $html;
 };
+
+/**
+ * Возвращает список проектов для пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $userId Id пользователя
+ * @return Массив проектов (строк)
+ */
+function getProjectsListForUser($databaseLink, int $userId)
+{
+    $sql = "SELECT `project_name` FROM `projects` WHERE `user_id` = $userId";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $projectsList = mysqli_fetch_all($res, MYSQLI_ASSOC);
+        $projects = [];
+        foreach ($projectsList as $i => $project) {
+            $projects[$i] = $project["project_name"];
+        }
+    }
+
+    return $projects;
+};
+
+/**
+ * Возвращает список задач для пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $userId Id пользователя
+ * @return Массив задач (строк)
+ */
+function getTasksListForUser($databaseLink, int $userId)
+{
+    $sql = "SELECT `task_name`, `completion_date`, `term_date`, `project_name` FROM `tasks`
+        JOIN `projects` ON `tasks`.`project_id` = `projects`.`id` WHERE `tasks`.`user_id` = $userId
+        ORDER BY `completion_date` ASC";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $tasks = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+
+    return $tasks;
+};
+
+/**
+ * Возвращает список задач для проекта
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $userId Id пользователя
+ * @param int $projectId Id проекта
+ * @return Массив задач (строк)
+ */
+function getTasksListForProject($databaseLink, int $userId, int $projectId)
+{
+    $sql = "SELECT `task_name`, `completion_date`, `term_date`
+        FROM `tasks` WHERE `project_id` = $projectId AND `user_id` = $userId";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $tasksForProject = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+
+    return $tasksForProject;
+};
