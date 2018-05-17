@@ -21,7 +21,7 @@ INSERT INTO `tasks`(`creation_date`, `completion_date`, `name`, `file`, `term_da
     (NULL, NULL, 'Встреча с другом', NULL, '2018-04-22', NULL, 1),
     (NULL, NULL, 'Купить корм для кота', NULL, NULL, 3, 1),
     (NULL, NULL, 'Заказать пиццу', NULL, NULL, 3, 1),
-    (NULL, NULL, 'Собеседование в IT компании', NULL, '2018-06-01', 2, 2),
+    (NULL, NULL, 'Собеседование в IT компании', NULL, '2018-06-01', 6, 2),
     (NULL, NULL, 'Встреча с другом', NULL, '2018-04-22', NULL, 2);
 -- SELECT * FROM `tasks`;
 

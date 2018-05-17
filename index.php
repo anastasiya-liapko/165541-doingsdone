@@ -7,7 +7,13 @@ if (!$link) {
     $error = mysqli_connect_error();
     $content = includeTemplate("templates/error.php", ["error" => $error]);
 } else {
+    $selectedUserId = isset($_GET["user_id"]) ? intval($_GET["user_id"]): 0;
     $selectedProjectId = isset($_GET["project_id"]) ? intval($_GET["project_id"]): 0;
+
+    $projects = getProjectsListForUser($link, $selectedUserId);
+    $projects = array_merge([["name" => "Входящие", "id" => 0]], $projects);
+    $tasks = getTasksListForUser($link, $selectedUserId);
+
     $existsProjects = array_filter(
         $projects,
         function($project) use ($selectedProjectId)
@@ -45,7 +51,8 @@ $layoutContent = includeTemplate(
         "tasksByProject" => $tasksByProject,
         "title" => "Дела в порядке",
         "showCompleteTasks" => $showCompleteTasks,
-        "selectedProjectId" => $selectedProjectId
+        "selectedProjectId" => $selectedProjectId,
+        "selectedUserId" => $selectedUserId
     ]
 );
 

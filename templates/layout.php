@@ -45,7 +45,7 @@
                     <ul class="main-navigation__list">
                         <?php foreach ($projects as $item): ?>
                         <li class="main-navigation__list-item  <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : "" ?>">
-                            <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$item["id"]?>"><?=$item["name"]?></a>
+                            <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$item["id"]?>&user_id=<?=$selectedUserId?>"><?=$item["name"]?></a>
                             <span class="main-navigation__list-item-count"><?= getTasksCountByProjectName($item["name"], $tasks) ?></span>
                         </li>
                         <?php endforeach; ?>
