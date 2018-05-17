@@ -22,14 +22,14 @@
 </div>
 
 <table class="tasks">
-    <?php foreach ($tasks as $key => $item): ?>
-    <tr class="tasks__item task <?= $item["done"] == "Да" ? "task--completed" : "" ?>
-    <?= getHoursCountTillTheDate($item["date"]) <= 24 && $item["done"] !== "Да" ? "task--important" : "" ?>">
+    <?php foreach ($tasksByProject as $key => $item): ?>
+    <tr class="tasks__item task <?= $item["completion_date"] !== NULL ? "task--completed" : "" ?>
+    <?= getHoursCountTillTheDate($item["term_date"]) <= 24 && $item["completion_date"] !== NULL ? "task--important" : "" ?>">
         <?php if ($showCompleteTasks == 1): ?>
         <td class="task__select">
             <label class="checkbox task__checkbox">
                 <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                <span class="checkbox__text"><?=$item["task"];?></span>
+                <span class="checkbox__text"><?=$item["name"];?></span>
             </label>
         </td>
 
@@ -37,14 +37,14 @@
             <a class="download-link" href="#">Home.psd</a>
         </td>
 
-        <td class="task__date"><?=$item["date"];?></td>
+        <td class="task__date"><?=$item["term_date"];?></td>
         <?php endif; ?>
 
-        <?php if ($showCompleteTasks == 0 && $item["done"] == "Нет"): ?>
+        <?php if ($showCompleteTasks == 0 && $item["completion_date"] == NULL): ?>
         <td class="task__select">
             <label class="checkbox task__checkbox">
                 <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                <span class="checkbox__text"><?=htmlspecialchars($item["task"]);?></span>
+                <span class="checkbox__text"><?=htmlspecialchars($item["name"]);?></span>
             </label>
         </td>
 
@@ -52,7 +52,7 @@
             <a class="download-link" href="#">Home.psd</a>
         </td>
 
-        <td class="task__date"><?=htmlspecialchars($item["date"]);?></td>
+        <td class="task__date"><?=htmlspecialchars($item["term_date"]);?></td>
         <?php endif; ?>
     </tr>
     <?php endforeach; ?>

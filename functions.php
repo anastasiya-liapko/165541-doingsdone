@@ -1,5 +1,5 @@
 <?php
-define("PROJECT_ALL", "Все");
+define("DEFAULT_PROJECT", "Входящие");
 define("SECS_IN_HOUR", 3600);
 
 /**
@@ -9,16 +9,12 @@ define("SECS_IN_HOUR", 3600);
  * @param string $projectName Название проекта, по-умолчанию - "Все"
  * @return int Количество задач
  */
-function getTasksCountByProjectName(string $projectName = PROJECT_ALL, array $tasks = []): int
+function getTasksCountByProjectName(string $projectName = DEFAULT_PROJECT, array $tasks = []): int
 {
-    if (PROJECT_ALL == $projectName) {
-        return count($tasks);
-    }
-
     $result = 0;
 
     foreach ($tasks as $task) {
-        if ($projectName == $task["category"]) {
+        if ($projectName == $task["project_name"] || ($projectName == DEFAULT_PROJECT && empty($task["project_name"]))) {
             $result++;
         }
     }
@@ -29,17 +25,18 @@ function getTasksCountByProjectName(string $projectName = PROJECT_ALL, array $ta
 /**
  * Возвращает количество часов, оставшееся до каждой из дат
  *
- * @param string $date дата завершения задачи
- * @return integer количество часов
+ * @param $date дата завершения задачи
+ * @return количество часов
  */
-function getHoursCountTillTheDate(string $date): int
+function getHoursCountTillTheDate($date)
 {
-    $ts = time();
-    $endTs = strtotime($date);
-    $tsDiff = $endTs - $ts;
-    $hoursUntilEnd = floor($tsDiff / SECS_IN_HOUR);
-
-    return $hoursUntilEnd;
+    if ($date !== NULL) {
+        $ts = time();
+        $endTs = strtotime($date);
+        $tsDiff = $endTs - $ts;
+        $hoursUntilEnd = floor($tsDiff / SECS_IN_HOUR);
+        return $hoursUntilEnd;
+    }
 };
 
 /**
@@ -62,4 +59,59 @@ function includeTemplate(string $template, array $data = []): string
     }
 
     return $html;
+};
+
+/**
+ * Возвращает список проектов для пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $userId Id пользователя
+ * @return Массив проектов (строк)
+ */
+function getProjectsListForUser($databaseLink, int $userId)
+{
+    $sql = "
+        SELECT
+            `name`,
+            `id`
+        FROM
+            `projects`
+        WHERE
+            `user_id` = $userId
+    ";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $projectsList = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+
+    return $projectsList;
+};
+
+/**
+ * Возвращает список задач для пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $userId Id пользователя
+ * @return Массив задач (строк)
+ */
+function getTasksListForUser($databaseLink, $userId)
+{
+    $sql = "
+SELECT
+    `tasks`.*,
+    `projects`.`name` `project_name`
+FROM
+    `tasks`
+LEFT  JOIN
+    `projects` ON `tasks`.`project_id` = `projects`.`id`
+WHERE
+    `tasks`.`user_id` = $userId
+ORDER BY
+    `completion_date` ASC";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $tasks = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+
+    return $tasks;
 };
