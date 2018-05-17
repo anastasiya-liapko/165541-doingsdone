@@ -70,6 +70,8 @@ function includeTemplate(string $template, array $data = []): string
  */
 function getProjectsListForUser($databaseLink, int $userId)
 {
+    $projectsList = [];
+
     $sql = "
         SELECT
             `name`,
@@ -97,17 +99,18 @@ function getProjectsListForUser($databaseLink, int $userId)
 function getTasksListForUser($databaseLink, $userId)
 {
     $sql = "
-SELECT
-    `tasks`.*,
-    `projects`.`name` `project_name`
-FROM
-    `tasks`
-LEFT  JOIN
-    `projects` ON `tasks`.`project_id` = `projects`.`id`
-WHERE
-    `tasks`.`user_id` = $userId
-ORDER BY
-    `completion_date` ASC";
+        SELECT
+            `tasks`.*,
+            `projects`.`name` `project_name`
+        FROM
+            `tasks`
+        LEFT  JOIN
+            `projects` ON `tasks`.`project_id` = `projects`.`id`
+        WHERE
+            `tasks`.`user_id` = $userId
+        ORDER BY
+            `completion_date` ASC
+    ";
 
     if ($res = mysqli_query($databaseLink, $sql)) {
         $tasks = mysqli_fetch_all($res, MYSQLI_ASSOC);
