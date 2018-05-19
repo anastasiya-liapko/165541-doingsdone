@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body><!--class="overlay"-->
+<body class="<?=count($errors) ? "overlay" : ""?>"><!--class="overlay"-->
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -57,8 +57,13 @@
             </section>
 
             <main class="content__main">
+            <?php if (isset($_GET["success"])): ?>
+                <div class="alert alert-success"> <p>Задача добавлена! </p>
+                </div>
+            <?php endif; ?>
                 <?= $content; ?>
             </main>
+
         </div>
     </div>
 </div>
@@ -105,5 +110,10 @@
 
 <script src="flatpickr.js"></script>
 <script src="script.js"></script>
+
+<div class="form-popup">
+    <?= $formPopup ?>
+</div>
+
 </body>
 </html>

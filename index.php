@@ -1,7 +1,10 @@
 <?php
 require_once "init.php";
+require_once "mysql_helper.php";
 require_once "functions.php";
 require_once "data.php";
+require_once "add.php";
+
 
 if (!$link) {
     $error = mysqli_connect_error();
@@ -34,6 +37,8 @@ if (!$link) {
             ]
         );
     }
+
+    $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
 }
 
 $layoutContent = includeTemplate(
@@ -45,7 +50,9 @@ $layoutContent = includeTemplate(
         "tasksByProject" => $tasksByProject,
         "title" => "Дела в порядке",
         "showCompleteTasks" => $showCompleteTasks,
-        "selectedProjectId" => $selectedProjectId
+        "selectedProjectId" => $selectedProjectId,
+        "formPopup" => $formPopup,
+        "errors" => $errors
     ]
 );
 

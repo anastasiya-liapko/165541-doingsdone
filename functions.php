@@ -109,7 +109,7 @@ function getTasksListForUser($databaseLink, $userId)
         WHERE
             `tasks`.`user_id` = $userId
         ORDER BY
-            `completion_date` ASC
+            `creation_date` DESC
     ";
 
     if ($res = mysqli_query($databaseLink, $sql)) {
@@ -117,4 +117,16 @@ function getTasksListForUser($databaseLink, $userId)
     }
 
     return $tasks;
+};
+/**
+ * Производит валидацию даты
+ *
+ * @param string $date дата
+ * @param string $format формат даты
+ * @return boolean
+ */
+function validateDate(string $date, string $format = "Y-m-d H:i")
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
 };
