@@ -118,6 +118,7 @@ function getTasksListForUser($databaseLink, $userId)
 
     return $tasks;
 };
+
 /**
  * Производит валидацию даты
  *
@@ -129,4 +130,52 @@ function validateDate(string $date, string $format = "Y-m-d H:i")
 {
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
+};
+
+/**
+ * Производит валидацию формы задач
+ *
+ * @param array $formsData данные из формы
+ * @return array массив с ошибками
+ */
+function checkTasksOnErrors(array $formsData): array
+{
+    $errors = [];
+    $required = ["name"];
+
+    foreach ($required as $key) {
+        if (empty($formsData[$key])) {
+            $errors[$key] = "Заполните это поле";
+        }
+    }
+
+    foreach ($formsData as $key => $value) {
+        if ($key == "date" && !empty($value) && !validateDate($value)) {
+            $errors[$key] = "Дата должна быть корректной";
+        }
+    }
+
+    return $errors;
+};
+
+/**
+ * Добавляет новую задачу
+ *
+ * @param array $formsData данные из формы
+ * @return boolean
+ */
+function addNewTask($databaseLink, $formsData)
+{
+    $sql = "
+        INSERT INTO
+            `tasks` (`creation_date`, `completion_date`, `name`, `file`, `term_date`, `project_id`, `user_id`)
+        VALUES
+            (NOW(), NULL, ?, ?, ?, ?, 1)
+    ";
+
+    $stmt = mysqli_prepare($databaseLink, $sql);
+    mysqli_stmt_bind_param($stmt, 'sssd', $formsData["name"], $formsData["file"], $formsData["date"], $formsData["project"]);
+    $result = mysqli_stmt_execute($stmt);
+
+    return $result;
 };

@@ -2,8 +2,6 @@
 require_once "init.php";
 require_once "functions.php";
 require_once "data.php";
-require_once "add.php";
-
 
 if (!$link) {
     $error = mysqli_connect_error();
@@ -38,22 +36,65 @@ if (!$link) {
     }
 
     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $tasksForm = $_POST;
+        $errors = checkTasksOnErrors($tasksForm);
+
+        if ($tasksForm["project"] == 0) {
+            $tasksForm["project"] = NULL;
+        }
+        if ($tasksForm["date"] == "") {
+            $tasksForm["date"] = NULL;
+        }
+
+        if (isset($_FILES["preview"]["name"])) {
+            $fileName = $_FILES["preview"]["name"];
+            $tmpName = $_FILES["preview"]["tmp_name"];
+            $filePath = __DIR__ . "/";
+            $fileUrl = "/" . $fileName;
+            move_uploaded_file($tmpName, $fileUrl);
+            $tasksForm["file"] = $fileName;
+        }
+
+        if (count($errors)) {
+            $formPopup = includeTemplate(
+                "templates/form.php",
+                [
+                    "tasksForm" => $tasksForm,
+                    "errors" => $errors,
+                    "projects" => $projects
+                ]
+            );
+        } else {
+            $addNewTask = addNewTask($link, $tasksForm);
+
+            if($addNewTask) {
+                // $taskId = mysqli_insert_id($link);
+                header("Location: index.php?success=true");
+            } else {
+                $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
+            }
+        }
+    } else {
+        $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
+    }
 }
 
-$layoutContent = includeTemplate(
-    "templates/layout.php",
-    [
-        "content" => $content,
-        "projects" => $projects,
-        "tasks" => $tasks,
-        "tasksByProject" => $tasksByProject,
-        "title" => "Дела в порядке",
-        "showCompleteTasks" => $showCompleteTasks,
-        "selectedProjectId" => $selectedProjectId,
-        "formPopup" => $formPopup,
-        "errors" => $errors,
-        "tasksForm" => $tasksForm
-    ]
-);
+$layoutContentParameters = [
+    "content" => $content,
+    "projects" => $projects,
+    "tasks" => $tasks,
+    "tasksByProject" => $tasksByProject,
+    "title" => "Дела в порядке",
+    "showCompleteTasks" => $showCompleteTasks,
+    "selectedProjectId" => $selectedProjectId,
+    "formPopup" => $formPopup
+];
 
+if (count($errors)) {
+    $layoutContentParameters = array_merge(["errors" => $errors], $layoutContentParameters);
+}
+
+$layoutContent = includeTemplate("templates/layout.php", $layoutContentParameters);
 print($layoutContent);
