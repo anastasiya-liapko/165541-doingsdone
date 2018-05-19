@@ -34,7 +34,7 @@
         </td>
 
         <td class="task__file">
-            <a class="download-link" href="#">Home.psd</a>
+            <a class="download-link" href="/165541-doingsdone/<?=$item["file"];?>"><?=$item["file"];?></a>
         </td>
 
         <td class="task__date"><?=$item["term_date"];?></td>
@@ -49,7 +49,7 @@
         </td>
 
         <td class="task__file">
-            <a class="download-link" href="#">Home.psd</a>
+            <a class="download-link" href="/165541-doingsdone/<?=$item["file"];?>"><?=$item["file"];?></a>
         </td>
 
         <td class="task__date"><?=htmlspecialchars($item["term_date"]);?></td>

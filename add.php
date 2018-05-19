@@ -29,10 +29,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_FILES["preview"]["name"])) {
         $fileName = $_FILES["preview"]["name"];
         $tmpName = $_FILES["preview"]["tmp_name"];
-        $fileUrl = "/165541-doingsdone/" . $fileName;
+        $filePath = __DIR__ . "/";
+        $fileUrl = $filePath . $fileName;
         move_uploaded_file($tmpName, $fileUrl);
         $tasksForm["file"] = $fileName;
-        // print_r("<a href=$fileUrl>$fileName</a>");
     }
 
     if (count($errors)) {
@@ -51,11 +51,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 `tasks` (`creation_date`, `completion_date`, `name`, `file`, `term_date`, `project_id`, `user_id`)
             VALUES (NOW(), NULL, ?, ?, ?, ?, 1)
         ";
-        $stmt = db_get_prepare_stmt($link, $sql, [$tasksForm["name"], $tasksForm["file"], $tasksForm["date"], $tasksForm["project"]]);
+        if ($tasksForm["project"] == 0) {
+            $tasksForm["project"] = NULL;
+        }
+        if ($tasksForm["date"] == "") {
+            $tasksForm["date"] = NULL;
+        }
+        $stmt = mysqli_prepare($link, $sql);
+        mysqli_stmt_bind_param($stmt, 'sssd', $tasksForm["name"], $tasksForm["file"], $tasksForm["date"], $tasksForm["project"]);
         $result = mysqli_stmt_execute($stmt);
 
         if($result) {
-            $taskId = mysqli_insert_id($link);
+            // $taskId = mysqli_insert_id($link);
             header("Location: /165541-doingsdone/index.php?success=true");
         } else {
             $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
