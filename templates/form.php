@@ -3,7 +3,7 @@
 
   <h2 class="modal__heading">Добавление задачи</h2>
 
-  <form class="form"  action="index.php" enctype="multipart/form-data" method="post">
+  <form class="form" action="index.php" enctype="multipart/form-data" method="post">
 
     <div class="form__row">
       <?php $classname = isset($errors["name"]) ? "form__input--error" : "";

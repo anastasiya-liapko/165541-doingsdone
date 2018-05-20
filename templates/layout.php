@@ -58,7 +58,8 @@
 
             <main class="content__main">
             <?php if (isset($_GET["success"])): ?>
-                <div class="alert alert-success"> <p>Задача добавлена! </p>
+                <div class="alert alert-success">
+                    <p>Задача добавлена! </p>
                 </div>
             <?php endif; ?>
                 <?= $content; ?>

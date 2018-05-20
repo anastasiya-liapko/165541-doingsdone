@@ -15,7 +15,6 @@ if (!$link) {
             return $project["id"] == $selectedProjectId;
         }
     );
-
     if (empty($existsProjects)) {
         $content = includeTemplate("templates/error.php", ["error" => "Проект не найден"]);
     } else {
@@ -34,20 +33,32 @@ if (!$link) {
             ]
         );
     }
-
     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
-
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $tasksForm = $_POST;
-        $errors = checkTasksOnErrors($tasksForm);
 
+        $regForm = $_POST;
+        $regErrors = checkRegOnErrors($regForm, $link);
+        if (count($regErrors)) {
+            $registerContent = includeTemplate("templates/register.php", ["errors" => $regErrors, "formsData" => $regErrors]);
+        } else {
+            $addNewUser = addNewUser($link, $regForm);
+            if ($addNewUser) {
+                $autorizationPopup = includeTemplate("templates/autorization.php");
+                $registerContent = includeTemplate("templates/register.php", ["autorizationPopup" => $autorizationPopup]);
+            } else {
+                $error = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
+                $registerContent = includeTemplate("templates/register.php", ["content" => $error]);
+            }
+        }
+
+        $tasksForm = $_POST;
+        $errors = checkTasksOnErrors($regForm);
         if ($tasksForm["project"] == 0) {
             $tasksForm["project"] = NULL;
         }
         if ($tasksForm["date"] == "") {
             $tasksForm["date"] = NULL;
         }
-
         if (isset($_FILES["preview"]["name"])) {
             $fileName = $_FILES["preview"]["name"];
             $tmpName = $_FILES["preview"]["tmp_name"];
@@ -56,7 +67,6 @@ if (!$link) {
             move_uploaded_file($tmpName, $fileUrl);
             $tasksForm["file"] = $fileName;
         }
-
         if (count($errors)) {
             $formPopup = includeTemplate(
                 "templates/form.php",
@@ -68,10 +78,9 @@ if (!$link) {
             );
         } else {
             $addNewTask = addNewTask($link, $tasksForm);
-
             if($addNewTask) {
                 // $taskId = mysqli_insert_id($link);
-                header("Location: index.php?success=true");
+                header("Location: index.php");
             } else {
                 $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
             }
@@ -80,7 +89,6 @@ if (!$link) {
         $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
     }
 }
-
 $layoutContentParameters = [
     "content" => $content,
     "projects" => $projects,
@@ -91,10 +99,8 @@ $layoutContentParameters = [
     "selectedProjectId" => $selectedProjectId,
     "formPopup" => $formPopup
 ];
-
 if (count($errors)) {
     $layoutContentParameters = array_merge(["errors" => $errors], $layoutContentParameters);
 }
-
 $layoutContent = includeTemplate("templates/layout.php", $layoutContentParameters);
 print($layoutContent);
