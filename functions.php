@@ -138,7 +138,7 @@ function validateDate(string $date, string $format = "Y-m-d H:i")
  * @param array $formsData данные из формы
  * @return array массив с ошибками
  */
-function checkTasksOnErrors(array $formsData): array
+function checkTasksFormOnErrors(array $formsData): array
 {
     $errors = [];
     $required = ["name"];
@@ -165,7 +165,7 @@ function checkTasksOnErrors(array $formsData): array
  * @param $databaseLink Ссылка на базу данных
  * @return array массив с ошибками
  */
-function checkRegOnErrors(array $formsData, $databaseLink): array
+function checkRegFormOnErrors(array $formsData, $databaseLink): array
 {
     $sql = "
         SELECT
@@ -246,7 +246,7 @@ function addNewUser($databaseLink, $formsData)
     $password = password_hash($formsData["password"], PASSWORD_DEFAULT);
 
     $stmt = mysqli_prepare($databaseLink, $sql);
-    mysqli_stmt_bind_param($stmt, 'sss', $formsData["email"], $formsData["name"], $formsData["password"]);
+    mysqli_stmt_bind_param($stmt, 'sss', $formsData["email"], $formsData["name"], $password);
     $result = mysqli_stmt_execute($stmt);
 
     return $result;

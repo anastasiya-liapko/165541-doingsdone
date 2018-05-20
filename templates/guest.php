@@ -19,9 +19,6 @@
         </a>
 
 
-
-
-
         <div class="main-header__side">
           <a class="main-header__side-item button button--transparent" href="#">Войти</a>
         </div>
@@ -40,9 +37,6 @@
           <a class="welcome__button button" href="#">Зарегистрироваться</a>
         </section>
       </div>
-
-
-
 
 
     </div>
