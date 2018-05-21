@@ -211,17 +211,17 @@ function checkRegFormOnErrors(array $formsData, $databaseLink): array
  * @param array $formsData данные из формы
  * @return boolean
  */
-function addNewTask($databaseLink, $formsData)
+function addNewTask($databaseLink, $formsData, $userId)
 {
     $sql = "
         INSERT INTO
             `tasks` (`creation_date`, `completion_date`, `name`, `file`, `term_date`, `project_id`, `user_id`)
         VALUES
-            (NOW(), NULL, ?, ?, ?, ?, 1)
+            (NOW(), NULL, ?, ?, ?, ?, ?)
     ";
 
     $stmt = mysqli_prepare($databaseLink, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssd', $formsData["name"], $formsData["file"], $formsData["date"], $formsData["project"]);
+    mysqli_stmt_bind_param($stmt, 'sssdd', $formsData["name"], $formsData["file"], $formsData["date"], $formsData["project"], $userId);
     $result = mysqli_stmt_execute($stmt);
 
     return $result;
