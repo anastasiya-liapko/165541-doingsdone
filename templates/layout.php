@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?=count($errors) ? "overlay" : ""?>"><!--class="overlay"-->
+<body class="<?=count($errors) || $autorizationPopup ? "overlay" : ""?>"><!--class="overlay"-->
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -70,7 +70,8 @@
 <script src="flatpickr.js"></script>
 <script src="script.js"></script>
 
-<div class="form-popup">
+<div class="popup">
+    <?= $autorizationPopup; ?>
     <?= $formPopup ?>
 </div>
 

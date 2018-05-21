@@ -40,7 +40,7 @@ if (!$link) {
     }
 
     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
-    // $content = includeTemplate("templates/register.php");
+    $content = includeTemplate("templates/register.php");
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["register"])) {
@@ -52,7 +52,6 @@ if (!$link) {
                 $addNewUser = addNewUser($link, $data);
                 if ($addNewUser) {
                     $autorizationPopup = includeTemplate("templates/autorization.php");
-                    $content = includeTemplate("templates/register.php", ["autorizationPopup" => $autorizationPopup]);
                 } else {
                     $error = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
                     $content = includeTemplate("templates/register.php", ["content" => $error]);
@@ -94,7 +93,6 @@ if (!$link) {
             }
             if (count($popupErrors)) {
                 $autorizationPopup = includeTemplate("templates/autorization.php", ["formsData" => $data, "errors" => $popupErrors]);
-                $content = includeTemplate("templates/register.php", ["autorizationPopup" => $autorizationPopup]);
             }
             else {
                 // print("ok");
@@ -148,7 +146,8 @@ if (!$link) {
 $layoutContentParameters = [
     "content" => $content,
     "title" => "Дела в порядке",
-    "formPopup" => $formPopup
+    "formPopup" => $formPopup,
+    "autorizationPopup" => $autorizationPopup
 ];
 if (count($popupErrors)) {
     $layoutContentParameters = array_merge(["errors" => $popupErrors], $layoutContentParameters);
