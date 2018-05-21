@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body><!--class="overlay"-->
+<body class="<?=count($errors) || $autorizationPopup ? "overlay" : ""?>"><!--class="overlay"-->
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -18,48 +18,12 @@
             <a href="#">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
-
-            <div class="main-header__side">
-                <a class="main-header__side-item button button--plus open-modal" href="javascript:;"
-                target="task_add">Добавить задачу</a>
-
-                <div class="main-header__side-item user-menu">
-                    <div class="user-menu__image">
-                        <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
-                    </div>
-
-                    <div class="user-menu__data">
-                        <p>Константин</p>
-
-                        <a href="#">Выйти</a>
-                    </div>
+            <?php if (isset($_GET["success"])): ?>
+                <div class="alert alert-success">
+                    <p>Задача добавлена! </p>
                 </div>
-            </div>
-        </header>
-
-        <div class="content">
-            <section class="content__side">
-                <h2 class="content__side-heading">Проекты</h2>
-
-                <nav class="main-navigation">
-                    <ul class="main-navigation__list">
-                        <?php foreach ($projects as $item): ?>
-                        <li class="main-navigation__list-item  <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : "" ?>">
-                            <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$item["id"]?>"><?=$item["name"]?></a>
-                            <span class="main-navigation__list-item-count"><?= getTasksCountByProjectName($item["name"], $tasks) ?></span>
-                        </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </nav>
-
-                <a class="button button--transparent button--plus content__side-button open-modal"
-                   href="javascript:;" target="project_add">Добавить проект</a>
-            </section>
-
-            <main class="content__main">
-                <?= $content; ?>
-            </main>
-        </div>
+            <?php endif; ?>
+        <?= $content; ?>
     </div>
 </div>
 
@@ -105,5 +69,11 @@
 
 <script src="flatpickr.js"></script>
 <script src="script.js"></script>
+
+<div class="popup">
+    <?= $autorizationPopup; ?>
+    <?= $formPopup ?>
+</div>
+
 </body>
 </html>

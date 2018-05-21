@@ -30,7 +30,7 @@ CREATE TABLE `tasks` (
     `completion_date` DATE,
     `name` CHAR(64),
     `file` CHAR(128),
-    `term_date` DATE,
+    `term_date` DATE DEFAULT NULL,
     `project_id` INT DEFAULT NULL,
     `user_id` INT NOT NULL,
     FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`)

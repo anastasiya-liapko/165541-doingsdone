@@ -109,7 +109,7 @@ function getTasksListForUser($databaseLink, $userId)
         WHERE
             `tasks`.`user_id` = $userId
         ORDER BY
-            `completion_date` ASC
+            `creation_date` DESC
     ";
 
     if ($res = mysqli_query($databaseLink, $sql)) {
@@ -117,4 +117,137 @@ function getTasksListForUser($databaseLink, $userId)
     }
 
     return $tasks;
+};
+
+/**
+ * Производит валидацию даты
+ *
+ * @param string $date дата
+ * @param string $format формат даты
+ * @return boolean
+ */
+function validateDate(string $date, string $format = "Y-m-d H:i")
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+};
+
+/**
+ * Производит валидацию формы задач
+ *
+ * @param array $formsData данные из формы
+ * @return array массив с ошибками
+ */
+function checkTasksFormOnErrors(array $formsData): array
+{
+    $errors = [];
+    $required = ["name"];
+
+    foreach ($required as $key) {
+        if (empty($formsData[$key])) {
+            $errors[$key] = "Заполните это поле";
+        }
+    }
+
+    foreach ($formsData as $key => $value) {
+        if ($key == "date" && !empty($value) && !validateDate($value)) {
+            $errors[$key] = "Дата должна быть корректной";
+        }
+    }
+
+    return $errors;
+};
+
+/**
+ * Производит валидацию формы регистрации
+ *
+ * @param array $formsData данные из формы
+ * @param $databaseLink Ссылка на базу данных
+ * @return array массив с ошибками
+ */
+function checkRegFormOnErrors(array $formsData, $databaseLink): array
+{
+    $sql = "
+        SELECT
+            `users`.`email`
+        FROM
+            `users`
+    ";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $emails = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+
+    $errors = [];
+    $required = ["name", "email", "password"];
+
+    foreach ($required as $key) {
+        if (empty($formsData[$key])) {
+            $errors[$key] = "Заполните это поле";
+        }
+    }
+
+    foreach ($formsData as $key => $value) {
+        foreach($emails as $item) {
+            if ($key == "email" && $value == $item["email"]) {
+                $errors[$key] = "Данный email уже зарегистрирован";
+            }
+        }
+    }
+
+    foreach ($formsData as $key => $value) {
+        if ($key == "email" && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+            $errors[$key] = "E-mail введён некорректно";
+        }
+    }
+
+    return $errors;
+};
+
+/**
+ * Добавляет новую задачу
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param array $formsData данные из формы
+ * @return boolean
+ */
+function addNewTask($databaseLink, $formsData)
+{
+    $sql = "
+        INSERT INTO
+            `tasks` (`creation_date`, `completion_date`, `name`, `file`, `term_date`, `project_id`, `user_id`)
+        VALUES
+            (NOW(), NULL, ?, ?, ?, ?, 1)
+    ";
+
+    $stmt = mysqli_prepare($databaseLink, $sql);
+    mysqli_stmt_bind_param($stmt, 'sssd', $formsData["name"], $formsData["file"], $formsData["date"], $formsData["project"]);
+    $result = mysqli_stmt_execute($stmt);
+
+    return $result;
+};
+
+/**
+ * Добавляет нового пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param array $formsData данные из формы
+ * @return boolean
+ */
+function addNewUser($databaseLink, $formsData)
+{
+    $sql = "
+        INSERT INTO
+            `users` (`registration_date`, `email`, `name`, `password`, `contact`)
+        VALUES
+            (NOW(), ?, ?, ?, NULL)
+    ";
+
+    $password = password_hash($formsData["password"], PASSWORD_DEFAULT);
+
+    $stmt = mysqli_prepare($databaseLink, $sql);
+    mysqli_stmt_bind_param($stmt, 'sss', $formsData["email"], $formsData["name"], $password);
+    $result = mysqli_stmt_execute($stmt);
+
+    return $result;
 };
