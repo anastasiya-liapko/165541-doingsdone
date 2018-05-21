@@ -9,21 +9,56 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?=count($errors) || $autorizationPopup ? "overlay" : ""?>"><!--class="overlay"-->
+<body class="<?=isset($errors) ? "overlay" : ""?> <?=isset($user) ? "" : "body-background"?>"><!--class="overlay"-->
+
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
-    <div class="container container--with-sidebar">
+    <div class="container <?=isset($user) ? "container--with-sidebar" : ""?>">
+        <?php if (isset($user)): ?>
         <header class="main-header">
             <a href="#">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
-            <?php if (isset($_GET["success"])): ?>
-                <div class="alert alert-success">
-                    <p>Задача добавлена! </p>
+
+            <div class="main-header__side">
+                <a class="main-header__side-item button button--plus open-modal" href="javascript:;"
+                target="task_add">Добавить задачу</a>
+
+                <div class="main-header__side-item user-menu">
+                    <div class="user-menu__image">
+                        <img src="img/user-pic.jpg" width="40" height="40" alt="Пользователь">
+                    </div>
+
+                    <div class="user-menu__data">
+                        <p><?=$user["name"]?></p>
+
+                        <a href="<?= include_once "logout.php" ?>">Выйти</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <?php endif; ?>
+        <?php if (!isset($user)): ?>
+        <header class="main-header">
+            <a href="/">
+                <img src="img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
+            </a>
+
+            <div class="main-header__side">
+                <a class="main-header__side-item button button--transparent open-modal"  href="javascript:;"
+                    target="user_login">Войти</a>
+            </div>
+        </header>
+        <?php endif; ?>
+
+        <div class="content">
+            <?php if (isset($_GET["success"]) && isset($user)): ?>
+                <div class="alert alert-success"> <p>Задача добавлена! </p>
                 </div>
             <?php endif; ?>
-        <?= $content; ?>
+            <?= $content; ?>
+        </div>
     </div>
 </div>
 
@@ -70,8 +105,8 @@
 <script src="flatpickr.js"></script>
 <script src="script.js"></script>
 
-<div class="popup">
-    <?= $autorizationPopup; ?>
+<div class="form-popup">
+    <?= $autorizationPopup ?>
     <?= $formPopup ?>
 </div>
 
