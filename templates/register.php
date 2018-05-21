@@ -1,16 +1,16 @@
 </header>
 
 <div class="content">
-<?php if (!$autorizationPopup): ?>
+
 <section class="content__side">
     <p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
 
     <a class="button button--transparent content__side-button" href="#">Войти</a>
 </section>
-<?php endif; ?>
+
 
 <main class="content__main">
-<?php if (!$autorizationPopup): ?>
+
     <p><?=$error; ?> </p>
     <h2 class="content__main-heading">Регистрация аккаунта</h2>
 
@@ -51,7 +51,7 @@
         <input class="button" type="submit" name="register" value="Зарегистрироваться">
     </div>
     </form>
-    <?php endif; ?>
+
 </main>
 <?= $autorizationPopup; ?>
 </div>

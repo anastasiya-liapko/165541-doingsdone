@@ -1,5 +1,5 @@
-<div class="modal" style="margin-top: -10%; margin-left: -3%;">
-  <!-- <button class="modal__close" type="button" name="button">Закрыть</button> -->
+<div class="modal" style="margin-top: -10%; margin-left: -4%;">
+  <button class="modal__close" type="button" name="button">Закрыть</button>
 
   <h2 class="modal__heading">Вход на сайт</h2>
 

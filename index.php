@@ -40,7 +40,7 @@ if (!$link) {
     }
 
     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
-    $content = includeTemplate("templates/register.php");
+    // $content = includeTemplate("templates/register.php");
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["register"])) {
@@ -60,11 +60,11 @@ if (!$link) {
             }
         } else if (isset($_POST["autorization"])) {
             $data = $_POST;
-            $errors = [];
+            $popupErrors = [];
             $required = ["email", "password"];
             foreach ($required as $key) {
                 if (empty($data[$key])) {
-                    $errors[$key] = "Заполните это поле";
+                    $popupEerrors[$key] = "Заполните это поле";
                 }
             }
             $email = mysqli_real_escape_string($link, $data["email"]);
@@ -79,21 +79,21 @@ if (!$link) {
             if ($res = mysqli_query($link, $sql)) {
                 $user = mysqli_fetch_all($res, MYSQLI_ASSOC);
             }
-            if (!count($errors) and $user) {
+            if (!count($popupErrors) and $user) {
                 foreach ($user as $key) {
                     if (password_verify($data["password"], $key["password"])) {
                         $_SESSION["user"] = $key;
                     }
                     else {
-                        $errors["password"] = "Неверный пароль";
+                        $popupErrors["password"] = "Неверный пароль";
                     }
                 }
             }
             else {
-                $errors["email"] = "Такой пользователь не найден";
+                $popupErrors["email"] = "Такой пользователь не найден";
             }
-            if (count($errors)) {
-                $autorizationPopup = includeTemplate("templates/autorization.php", ["formsData" => $data, "errors" => $errors]);
+            if (count($popupErrors)) {
+                $autorizationPopup = includeTemplate("templates/autorization.php", ["formsData" => $data, "errors" => $popupErrors]);
                 $content = includeTemplate("templates/register.php", ["autorizationPopup" => $autorizationPopup]);
             }
             else {
@@ -101,7 +101,7 @@ if (!$link) {
             }
         } else if (isset($_POST["task"])) {
             $tasksForm = $_POST;
-            $errors = checkTasksFormOnErrors($tasksForm);
+            $popupErrors = checkTasksFormOnErrors($tasksForm);
             if ($tasksForm["project"] == 0) {
                 $tasksForm["project"] = NULL;
             }
@@ -116,12 +116,12 @@ if (!$link) {
                 move_uploaded_file($tmpName, $fileUrl);
                 $tasksForm["file"] = $fileName;
             }
-            if (count($errors)) {
+            if (count($popupErrors)) {
                 $formPopup = includeTemplate(
                     "templates/form.php",
                     [
                         "tasksForm" => $tasksForm,
-                        "errors" => $errors,
+                        "errors" => $popupErrors,
                         "projects" => $projects
                     ]
                 );
@@ -150,8 +150,8 @@ $layoutContentParameters = [
     "title" => "Дела в порядке",
     "formPopup" => $formPopup
 ];
-// if (count($errors)) {
-//     $layoutContentParameters = array_merge(["errors" => $errors], $layoutContentParameters);
-// }
+if (count($popupErrors)) {
+    $layoutContentParameters = array_merge(["errors" => $popupErrors], $layoutContentParameters);
+}
 $layoutContent = includeTemplate("templates/layout.php", $layoutContentParameters);
 print($layoutContent);
