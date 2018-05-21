@@ -3,6 +3,11 @@ require_once "init.php";
 require_once "functions.php";
 require_once "data.php";
 
+session_start();
+
+$formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
+$autorizationPopup = includeTemplate("auth_form.php");
+
 if (!$link) {
     $error = mysqli_connect_error();
     $content = includeTemplate("templates/error.php", ["error" => $error]);
@@ -33,9 +38,8 @@ if (!$link) {
             ]
         );
     }
-    $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["task"])) {
         $tasksForm = $_POST;
         $errors = checkTasksFormOnErrors($tasksForm);
         if ($tasksForm["project"] == 0) {
@@ -70,10 +74,62 @@ if (!$link) {
                 $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
             }
         }
-    } else {
-        $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
+    }
+    // else {
+    //     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
+    // }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
+    $data = $_POST;
+    $errors = [];
+    $required = ["email", "password"];
+    foreach ($required as $key) {
+        if (empty($data[$key])) {
+            $errors[$key] = "Заполните это поле";
+        }
+    }
+    $email = mysqli_real_escape_string($link, $data["email"]);
+    $sql = "
+        SELECT
+            *
+        FROM
+            `users`
+        WHERE
+            `email` = '$email'
+    ";
+    if ($res = mysqli_query($link, $sql)) {
+        $user = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+    if (!count($errors) and $user) {
+        foreach ($user as $key) {
+            if (password_verify($data["password"], $key["password"])) {
+                $_SESSION["user"] = $key;
+            }
+            else {
+                $errors["password"] = "Неверный пароль";
+            }
+        }
+    }
+    else {
+        $errors["email"] = "Такой пользователь не найден";
+    }
+    if (count($errors)) {
+        $autorizationPopup = includeTemplate("auth_form.php", ["formsData" => $data, "errors" => $errors]);
+    }
+    else {
+        // $content = includeTemplate("templates/index.php", ["user" => $_SESSION["user"]]);
+        header("Location: index.php");
+    }
+} else {
+    if (isset($_SESSION["user"])) {
+        $content = includeTemplate("templates/index.php", ["user" => $_SESSION["user"]]);
+    }
+    else {
+        $content = includeTemplate("guest.php", []);
     }
 }
+
 $layoutContentParameters = [
     "content" => $content,
     "projects" => $projects,
@@ -82,10 +138,14 @@ $layoutContentParameters = [
     "title" => "Дела в порядке",
     "showCompleteTasks" => $showCompleteTasks,
     "selectedProjectId" => $selectedProjectId,
-    "formPopup" => $formPopup
+    "formPopup" => $formPopup,
+    "autorizationPopup" => $autorizationPopup
 ];
-if (count($errors)) {
+if (isset($errors)) {
     $layoutContentParameters = array_merge(["errors" => $errors], $layoutContentParameters);
+}
+if (isset($_SESSION["user"])) {
+    $layoutContentParameters = array_merge(["user" => $_SESSION["user"]], $layoutContentParameters);
 }
 $layoutContent = includeTemplate("templates/layout.php", $layoutContentParameters);
 print($layoutContent);

@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="<?=$autorizationPopup ? "overlay" : ""?>"><!--class="overlay"-->
+<body class="<?=isset($autorizationPopup) ? "overlay" : ""?>"><!--class="overlay"-->
   <h1 class="visually-hidden">Дела в порядке</h1>
 
   <div class="page-wrapper">
@@ -62,7 +62,7 @@
             </div>
 
             <div class="form__row form__row--controls">
-                <p class="error-message"><?=count($errors) ? "Пожалуйста, исправьте ошибки в форме" : ""?></p>
+                <p class="error-message"><?=isset($errors) ? "Пожалуйста, исправьте ошибки в форме" : ""?></p>
 
                 <input class="button" type="submit" name="register" value="Зарегистрироваться">
             </div>

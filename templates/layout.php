@@ -9,11 +9,13 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?=count($errors) ? "overlay" : ""?>"><!--class="overlay"-->
+<body class="<?=isset($errors) ? "overlay" : ""?> <?=isset($user) ? "" : "body-background"?>"><!--class="overlay"-->
+
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
-    <div class="container container--with-sidebar">
+    <div class="container <?=isset($user) ? "container--with-sidebar" : ""?>">
+        <?php if (isset($user)): ?>
         <header class="main-header">
             <a href="#">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
@@ -29,15 +31,29 @@
                     </div>
 
                     <div class="user-menu__data">
-                        <p>Константин</p>
+                        <p><?=$user["name"]?></p>
 
-                        <a href="#">Выйти</a>
+                        <a href="<?= include_once "logout.php" ?>">Выйти</a>
                     </div>
                 </div>
             </div>
         </header>
+        <?php endif; ?>
+        <?php if (!isset($user)): ?>
+        <header class="main-header">
+            <a href="/">
+                <img src="img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
+            </a>
+
+            <div class="main-header__side">
+                <a class="main-header__side-item button button--transparent open-modal"  href="javascript:;"
+                    target="user_login">Войти</a>
+            </div>
+        </header>
+        <?php endif; ?>
 
         <div class="content">
+        <?php if (isset($user)): ?>
             <section class="content__side">
                 <h2 class="content__side-heading">Проекты</h2>
 
@@ -55,9 +71,10 @@
                 <a class="button button--transparent button--plus content__side-button open-modal"
                    href="javascript:;" target="project_add">Добавить проект</a>
             </section>
+        <?php endif; ?>
 
             <main class="content__main">
-            <?php if (isset($_GET["success"])): ?>
+            <?php if (isset($_GET["success"]) && isset($user)): ?>
                 <div class="alert alert-success"> <p>Задача добавлена! </p>
                 </div>
             <?php endif; ?>
@@ -112,6 +129,7 @@
 <script src="script.js"></script>
 
 <div class="form-popup">
+    <?= $autorizationPopup ?>
     <?= $formPopup ?>
 </div>
 
