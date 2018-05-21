@@ -81,6 +81,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["task"])) {
 
 $autorizationPopup = includeTemplate("auth_form.php");
 
+if (isset($_GET["register"])) {
+    $content = includeTemplate("register.php");
+} else {
+    $content = includeTemplate("guest.php", []);
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
     $data = $_POST;
     $popupErrors = checkRegFormOnErrors($data, $link);
@@ -89,23 +95,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
     } else {
         $addNewUser = addNewUser($link, $data);
         if ($addNewUser) {
-            $autorizationPopup = includeTemplate("auth_form.php");
-            $content = includeTemplate("templates/index.php",
-            [
-                "autorizationPopup" => $autorizationPopup,
-                "tasksByProject" => $tasksByProject,
-                "showCompleteTasks" => $showCompleteTasks,
-                "projects" => $projects,
-                "selectedProjectId" => $selectedProjectId,
-                "tasks" => $tasks
-            ]);
+            // $autorizationPopup = includeTemplate("auth_form.php");
+            // $content = includeTemplate("templates/index.php",
+            // [
+            //     "autorizationPopup" => $autorizationPopup,
+            //     "tasksByProject" => $tasksByProject,
+            //     "showCompleteTasks" => $showCompleteTasks,
+            //     "projects" => $projects,
+            //     "selectedProjectId" => $selectedProjectId,
+            //     "tasks" => $tasks
+            // ]
+        // );
         } else {
             $error = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
             $content = includeTemplate("register.php", ["content" => $error]);
         }
     }
-} else {
-    $content = includeTemplate("register.php");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
@@ -144,19 +149,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
     }
     if (count($errors)) {
         $autorizationPopup = includeTemplate("auth_form.php", ["formsData" => $data, "errors" => $errors]);
+        $content = includeTemplate("guest.php", []);
     }
     else {
         $content = includeTemplate("templates/index.php", ["user" => $_SESSION["user"]]);
         // header("Location: index.php");
     }
-} else {
-    if (isset($_SESSION["user"])) {
-        $content = includeTemplate("templates/index.php", ["user" => $_SESSION["user"]]);
-    }
-    else {
-        $content = includeTemplate("guest.php", []);
-    }
 }
+// else {
+//     if (isset($_SESSION["user"])) {
+//         $content = includeTemplate("templates/index.php", ["user" => $_SESSION["user"]]);
+//     }
+//     else {
+//         $content = includeTemplate("guest.php", []);
+//     }
+// }
 
 $layoutContentParameters = [
     "content" => $content,
