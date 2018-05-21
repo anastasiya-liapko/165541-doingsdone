@@ -5,10 +5,7 @@ require_once "data.php";
 
 session_start();
 
-$formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
-$autorizationPopup = includeTemplate("auth_form.php");
-
-if (!$link) {
+if (!isset($link)) {
     $error = mysqli_connect_error();
     $content = includeTemplate("templates/error.php", ["error" => $error]);
 } else {
@@ -34,50 +31,81 @@ if (!$link) {
             "templates/index.php",
             [
                 "tasksByProject" => $tasksByProject,
-                "showCompleteTasks" => $showCompleteTasks
+                "showCompleteTasks" => $showCompleteTasks,
+                "projects" => $projects,
+                "selectedProjectId" => $selectedProjectId,
+                "tasks" => $tasks
             ]
         );
     }
+}
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["task"])) {
-        $tasksForm = $_POST;
-        $errors = checkTasksFormOnErrors($tasksForm);
-        if ($tasksForm["project"] == 0) {
-            $tasksForm["project"] = NULL;
-        }
-        if ($tasksForm["date"] == "") {
-            $tasksForm["date"] = NULL;
-        }
-        if (isset($_FILES["preview"]["name"])) {
-            $fileName = $_FILES["preview"]["name"];
-            $tmpName = $_FILES["preview"]["tmp_name"];
-            $filePath = __DIR__ . "/";
-            $fileUrl = "/" . $fileName;
-            move_uploaded_file($tmpName, $fileUrl);
-            $tasksForm["file"] = $fileName;
-        }
-        if (count($errors)) {
-            $formPopup = includeTemplate(
-                "templates/form.php",
-                [
-                    "tasksForm" => $tasksForm,
-                    "errors" => $errors,
-                    "projects" => $projects
-                ]
-            );
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["task"])) {
+    $tasksForm = $_POST;
+    $errors = checkTasksFormOnErrors($tasksForm);
+    if ($tasksForm["project"] == 0) {
+        $tasksForm["project"] = NULL;
+    }
+    if ($tasksForm["date"] == "") {
+        $tasksForm["date"] = NULL;
+    }
+    if (isset($_FILES["preview"]["name"])) {
+        $fileName = $_FILES["preview"]["name"];
+        $tmpName = $_FILES["preview"]["tmp_name"];
+        $filePath = __DIR__ . "/";
+        $fileUrl = "/" . $fileName;
+        move_uploaded_file($tmpName, $fileUrl);
+        $tasksForm["file"] = $fileName;
+    }
+    if (count($errors)) {
+        $formPopup = includeTemplate(
+            "templates/form.php",
+            [
+                "tasksForm" => $tasksForm,
+                "errors" => $errors,
+                "projects" => $projects
+            ]
+        );
+    } else {
+        $addNewTask = addNewTask($link, $tasksForm);
+        if($addNewTask) {
+            // $taskId = mysqli_insert_id($link);
+            header("Location: index.php?success=true");
         } else {
-            $addNewTask = addNewTask($link, $tasksForm);
-            if($addNewTask) {
-                // $taskId = mysqli_insert_id($link);
-                header("Location: index.php?success=true");
-            } else {
-                $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
-            }
+            $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
         }
     }
-    // else {
-    //     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
-    // }
+} else {
+    $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
+}
+
+$autorizationPopup = includeTemplate("auth_form.php");
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
+    $data = $_POST;
+    $popupErrors = checkRegFormOnErrors($data, $link);
+    if (count($popupErrors)) {
+        $content = includeTemplate("register.php", ["errors" => $popupErrors, "formsData" => $data]);
+    } else {
+        $addNewUser = addNewUser($link, $data);
+        if ($addNewUser) {
+            $autorizationPopup = includeTemplate("auth_form.php");
+            $content = includeTemplate("templates/index.php",
+            [
+                "autorizationPopup" => $autorizationPopup,
+                "tasksByProject" => $tasksByProject,
+                "showCompleteTasks" => $showCompleteTasks,
+                "projects" => $projects,
+                "selectedProjectId" => $selectedProjectId,
+                "tasks" => $tasks
+            ]);
+        } else {
+            $error = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
+            $content = includeTemplate("register.php", ["content" => $error]);
+        }
+    }
+} else {
+    $content = includeTemplate("register.php");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
@@ -118,8 +146,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
         $autorizationPopup = includeTemplate("auth_form.php", ["formsData" => $data, "errors" => $errors]);
     }
     else {
-        // $content = includeTemplate("templates/index.php", ["user" => $_SESSION["user"]]);
-        header("Location: index.php");
+        $content = includeTemplate("templates/index.php", ["user" => $_SESSION["user"]]);
+        // header("Location: index.php");
     }
 } else {
     if (isset($_SESSION["user"])) {
@@ -132,12 +160,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
 
 $layoutContentParameters = [
     "content" => $content,
-    "projects" => $projects,
-    "tasks" => $tasks,
-    "tasksByProject" => $tasksByProject,
     "title" => "Дела в порядке",
-    "showCompleteTasks" => $showCompleteTasks,
-    "selectedProjectId" => $selectedProjectId,
     "formPopup" => $formPopup,
     "autorizationPopup" => $autorizationPopup
 ];
