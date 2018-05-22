@@ -9,12 +9,12 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?=isset($errors) ? "overlay" : ""?> <?=isset($_SESSION["user"]) ? "" : "body-background"?>"><!--class="overlay"-->
+<body class="<?=isset($errors) ? "overlay" : ""?> <?=isset($_SESSION["user"]) || isset($_GET["signup"]) ? "" : "body-background"?>"><!--class="overlay"-->
 
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
-    <div class="container <?=isset($_SESSION["user"]) ? "container--with-sidebar" : ""?>">
+    <div class="container <?=isset($_SESSION["user"]) ? "container--with-sidebar" : ""?> <?=isset($_GET["signup"]) ? "container--with-sidebar" : ""?>">
         <?php if (isset($_SESSION["user"])): ?>
         <header class="main-header">
             <a href="#">
@@ -39,7 +39,7 @@
             </div>
         </header>
         <?php endif; ?>
-        <?php if (!isset($_SESSION["user"])): ?>
+        <?php if (!isset($_SESSION["user"]) && !isset($_GET["signup"])): ?>
         <header class="main-header">
             <a href="/">
                 <img src="img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
@@ -51,27 +51,42 @@
             </div>
         </header>
         <?php endif; ?>
+        <?php if (isset($_GET["signup"])): ?>
+        <header class="main-header">
+            <a href="#">
+            <img src="img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
+            </a>
+        </header>
+        <?php endif; ?>
 
         <div class="content">
-        <?php if (isset($_SESSION["user"])): ?>
-        <section class="content__side">
-            <h2 class="content__side-heading">Проекты</h2>
+            <?php if (isset($_SESSION["user"])): ?>
+            <section class="content__side">
+                <h2 class="content__side-heading">Проекты</h2>
 
-            <nav class="main-navigation">
-                <ul class="main-navigation__list">
-                    <?php foreach ($projects as $item): ?>
-                    <li class="main-navigation__list-item  <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : "" ?>">
-                        <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$item["id"]?>"><?=$item["name"]?></a>
-                        <span class="main-navigation__list-item-count"><?= getTasksCountByProjectName($item["name"], $tasks) ?></span>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
-            </nav>
+                <nav class="main-navigation">
+                    <ul class="main-navigation__list">
+                        <?php foreach ($projects as $item): ?>
+                        <li class="main-navigation__list-item  <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : "" ?>">
+                            <a class="main-navigation__list-item-link" href="index.php?project_id=<?=$item["id"]?>"><?=$item["name"]?></a>
+                            <span class="main-navigation__list-item-count"><?= getTasksCountByProjectName($item["name"], $tasks) ?></span>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </nav>
 
-            <a class="button button--transparent button--plus content__side-button open-modal"
-                href="javascript:;" target="project_add">Добавить проект</a>
-        </section>
-        <?php endif; ?>
+                <a class="button button--transparent button--plus content__side-button open-modal"
+                    href="javascript:;" target="project_add">Добавить проект</a>
+            </section>
+            <?php endif; ?>
+            <?php if (isset($_GET["signup"])): ?>
+            <section class="content__side">
+                <p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
+
+                <a class="button button--transparent content__side-button open-modal" href="javascript:;"
+                    target="user_login">Войти</a>
+            </section>
+            <?php endif; ?>
             <?= $content; ?>
         </div>
     </div>
