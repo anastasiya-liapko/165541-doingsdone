@@ -209,9 +209,10 @@ function checkRegFormOnErrors(array $formsData, $databaseLink): array
  *
  * @param $databaseLink Ссылка на базу данных
  * @param array $formsData данные из формы
+ * @param int $userId Id пользователя
  * @return boolean
  */
-function addNewTask($databaseLink, $formsData, $userId)
+function addNewTask($databaseLink, $formsData, int $userId)
 {
     $sql = "
         INSERT INTO
@@ -250,4 +251,116 @@ function addNewUser($databaseLink, $formsData)
     $result = mysqli_stmt_execute($stmt);
 
     return $result;
+};
+
+/**
+ * Возвращает данные пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param array $formsData данные из формы
+ * @return array Данные пользователя
+ */
+function getUserData($databaseLink, array $formsData): array
+{
+    $email = mysqli_real_escape_string($databaseLink, $formsData["email"]);
+
+    $sql = "
+        SELECT
+            *
+        FROM
+            `users`
+        WHERE
+            `email` = '$email'
+    ";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $userData = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+
+    return $userData;
+};
+
+/**
+ * Производит валидацию формы авторизации
+ *
+ * @param array $formsData данные из формы
+ * @param array $userData Данные пользователя
+ * @return array массив с ошибками
+ */
+function checkAutoFormOnErrors(array $formsData, array $userData): array
+{
+    $errors = [];
+
+    $required = ["email", "password"];
+    foreach ($required as $key) {
+        if (empty($formsData[$key])) {
+            $errors[$key] = "Заполните это поле";
+        }
+    }
+    if (!count($errors) && $userData) {
+        foreach ($userData as $key) {
+            if (password_verify($formsData["password"], $key["password"])) {
+                $_SESSION["user"] = $key;
+
+            }
+            else {
+                $errors["password"] = "Неверный пароль";
+            }
+        }
+    } else {
+        $errors["email"] = "Такой пользователь не найден";
+    }
+
+    return $errors;
+};
+
+/**
+ * Функция отрисовки шаблона с данными для авторизованного пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $userId Id пользователя
+ * @return string html-код шаблона
+ */
+function includeUserPageTemplate($databaseLink, int $userId): string
+{
+    $showCompleteTasks = rand(0, 1);
+    $projects = getProjectsListForUser($databaseLink, $userId);
+    $projects = array_merge([["name" => "Входящие", "id" => 0]], $projects);
+    $tasks = getTasksListForUser($databaseLink, $userId);
+    if (!isset($databaseLink)) {
+        $error = mysqli_connect_error();
+        $userPageTemplate = includeTemplate("templates/error.php", ["error" => $error]);
+    } else {
+        $selectedProjectId = isset($_GET["project_id"]) ? intval($_GET["project_id"]): 0;
+        $existsProjects = array_filter(
+            $projects,
+            function($project) use ($selectedProjectId)
+            {
+                return $project["id"] == $selectedProjectId;
+            }
+        );
+        if (empty($existsProjects)) {
+            $userPageTemplate = includeTemplate("templates/error.php", ["error" => "Проект не найден"]);
+        } else {
+            $tasksByProject = array_filter(
+                $tasks,
+                function($task) use ($selectedProjectId)
+                {
+                    return $task["project_id"] == $selectedProjectId;
+                }
+            );
+        }
+        $userPageTemplate = includeTemplate(
+            "templates/index.php",
+            [
+                "tasksByProject" => $tasksByProject,
+                "showCompleteTasks" => $showCompleteTasks,
+                "projects" => $projects,
+                "selectedProjectId" => $selectedProjectId,
+                "tasks" => $tasks
+            ]
+        );
+    }
+
+    return $userPageTemplate;
 };

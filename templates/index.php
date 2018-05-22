@@ -18,6 +18,10 @@
 
 
 <main class="content__main">
+<?php if (isset($_GET["success"]) && isset($_SESSION["user"])): ?>
+    <div class="alert alert-success"> <p>Задача добавлена! </p>
+    </div>
+<?php endif; ?>
 <h2 class="content__main-heading">Список задач</h2>
 
 <form class="search-form" action="index.html" method="post">

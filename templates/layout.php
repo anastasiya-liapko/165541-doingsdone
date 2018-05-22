@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?=isset($errors) ? "overlay" : ""?> <?=isset($user) ? "" : "body-background"?>"><!--class="overlay"-->
+<body class="<?=isset($errors) ? "overlay" : ""?> <?=isset($_SESSION["user"]) ? "" : "body-background"?>"><!--class="overlay"-->
 
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
-    <div class="container <?=isset($user) ? "container--with-sidebar" : ""?>">
-        <?php if (isset($user)): ?>
+    <div class="container <?=isset($_SESSION["user"]) ? "container--with-sidebar" : ""?>">
+        <?php if (isset($_SESSION["user"])): ?>
         <header class="main-header">
             <a href="#">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
@@ -31,15 +31,15 @@
                     </div>
 
                     <div class="user-menu__data">
-                        <p><?=$user["name"]?></p>
+                        <p><?=$_SESSION["user"]["name"]?></p>
 
-                        <a href="<?= include_once "logout.php" ?>">Выйти</a>
+                        <a href="index.php?logout">Выйти</a>
                     </div>
                 </div>
             </div>
         </header>
         <?php endif; ?>
-        <?php if (!isset($user)): ?>
+        <?php if (!isset($_SESSION["user"])): ?>
         <header class="main-header">
             <a href="/">
                 <img src="img/logo.png" width="153" height="42" alt="Логитип Дела в порядке">
@@ -53,10 +53,6 @@
         <?php endif; ?>
 
         <div class="content">
-            <?php if (isset($_GET["success"]) && isset($user)): ?>
-                <div class="alert alert-success"> <p>Задача добавлена! </p>
-                </div>
-            <?php endif; ?>
             <?= $content; ?>
         </div>
     </div>
@@ -107,7 +103,7 @@
 
 <div class="form-popup">
     <?= $autorizationPopup ?>
-    <?= $formPopup ?>
+    <?= isset($formPopup) ? $formPopup : "" ?>
 </div>
 
 </body>
