@@ -107,7 +107,7 @@ function getTasksListForUser($databaseLink, $userId)
         LEFT  JOIN
             `projects` ON `tasks`.`project_id` = `projects`.`id`
         WHERE
-            `tasks`.`user_id` = $userId
+            `tasks`.`user_id` = '$userId'
         ORDER BY
             `creation_date` DESC
     ";
@@ -205,30 +205,6 @@ function checkRegFormOnErrors(array $formsData, $databaseLink): array
 };
 
 /**
- * Добавляет новую задачу
- *
- * @param $databaseLink Ссылка на базу данных
- * @param array $formsData данные из формы
- * @param int $userId Id пользователя
- * @return boolean
- */
-function addNewTask($databaseLink, $formsData, int $userId)
-{
-    $sql = "
-        INSERT INTO
-            `tasks` (`creation_date`, `completion_date`, `name`, `file`, `term_date`, `project_id`, `user_id`)
-        VALUES
-            (NOW(), NULL, ?, ?, ?, ?, ?)
-    ";
-
-    $stmt = mysqli_prepare($databaseLink, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssdd', $formsData["name"], $formsData["file"], $formsData["date"], $formsData["project"], $userId);
-    $result = mysqli_stmt_execute($stmt);
-
-    return $result;
-};
-
-/**
  * Добавляет нового пользователя
  *
  * @param $databaseLink Ссылка на базу данных
@@ -297,6 +273,7 @@ function checkAutoFormOnErrors(array $formsData, array $userData): array
             $errors[$key] = "Заполните это поле";
         }
     }
+
     if (!count($errors) && $userData) {
         foreach ($userData as $key) {
             if (password_verify($formsData["password"], $key["password"])) {
@@ -312,4 +289,92 @@ function checkAutoFormOnErrors(array $formsData, array $userData): array
     }
 
     return $errors;
+};
+
+/**
+ * Производит валидацию формы добавления проекта
+ *
+ * @param array $formsData данные из формы
+ * @param int $userId Id пользователя
+ * @param $databaseLink Ссылка на базу данных
+ * @return array массив с ошибками
+ */
+function checkProjectFormOnErrors(array $formsData, int $userId, $databaseLink): array
+{
+    $errors = [];
+
+    $required = ["name"];
+    foreach ($required as $key) {
+        if (empty($formsData[$key])) {
+            $errors[$key] = "Заполните это поле";
+        }
+    }
+
+    $sql = "
+        SELECT
+            `projects`.`name`
+        FROM
+            `projects`
+        WHERE
+            `projects`.`user_id` = '$userId'
+    ";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $userProjects = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+    foreach ($userProjects as $item) {
+        if ($formsData["name"] == $item["name"]) {
+            $errors["name"] = "Такой проект уже существует";
+        }
+    }
+
+    return $errors;
+};
+
+/**
+ * Добавляет новый проект
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param array $formsData данные из формы
+ * @param int $userId Id пользователя
+ * @return boolean
+ */
+function addNewProject($formsData, int $userId, $databaseLink)
+{
+    $sql = "
+        INSERT INTO
+            `projects` (`name`, `user_id`)
+        VALUES
+            (?, ?)
+    ";
+
+    $stmt = mysqli_prepare($databaseLink, $sql);
+    mysqli_stmt_bind_param($stmt, 'sd', $formsData["name"], $userId);
+    $result = mysqli_stmt_execute($stmt);
+
+    return $result;
+};
+
+/**
+ * Добавляет новую задачу
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param array $formsData данные из формы
+ * @param int $userId Id пользователя
+ * @return boolean
+ */
+function addNewTask($databaseLink, $formsData, int $userId)
+{
+    $sql = "
+        INSERT INTO
+            `tasks` (`creation_date`, `completion_date`, `name`, `file`, `term_date`, `project_id`, `user_id`)
+        VALUES
+            (NOW(), NULL, ?, ?, ?, ?, ?)
+    ";
+
+    $stmt = mysqli_prepare($databaseLink, $sql);
+    mysqli_stmt_bind_param($stmt, 'sssdd', $formsData["name"], $formsData["file"], $formsData["date"], $formsData["project"], $userId);
+    $result = mysqli_stmt_execute($stmt);
+
+    return $result;
 };

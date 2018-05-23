@@ -5,9 +5,13 @@
 
   <form class="form" action="index.php" enctype="multipart/form-data" method="post">
     <div class="form__row">
+    <?php $classname = isset($errors["name"]) ? "form__input--error" : "";
+    $value = isset($formsData["name"]) ? $formsData["name"] : ""; ?>
       <label class="form__label" for="project_name">Название <sup>*</sup></label>
 
-      <input class="form__input" type="text" name="name" id="project_name" value="" placeholder="Введите название проекта">
+      <input class="form__input <?= $classname ?>" type="text" name="name" id="project_name" value="<?= $value ?>" placeholder="Введите название проекта">
+
+      <p class="form__message"><?=isset($errors["name"]) ? $errors["name"] : ""?></p>
     </div>
 
     <div class="form__row form__row--controls">

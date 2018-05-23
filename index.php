@@ -17,15 +17,17 @@ if (isset($_GET["signup"])) {
     $user = $_SESSION["user"]["id"];
     $showCompleteTasks = rand(0, 1);
     $projects = getProjectsListForUser($link, $user);
-    $projects = array_merge([["name" => "Входящие", "id" => 0]], $projects);
+    $projects = array_merge([["name" => "Входящие", "id" => $user]], $projects);
     $tasks = getTasksListForUser($link, $user);
     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
     $projectPopup = includeTemplate("templates/project.php");
+
     if (!$link) {
         $error = mysqli_connect_error();
         $content = includeTemplate("templates/error.php", ["error" => $error]);
     } else {
-        $selectedProjectId = isset($_GET["project_id"]) ? intval($_GET["project_id"]): 0;
+        $selectedProjectId = isset($_GET["project_id"]) ? intval($_GET["project_id"]) : $user;
+
         $existsProjects = array_filter(
             $projects,
             function($project) use ($selectedProjectId)
@@ -33,16 +35,29 @@ if (isset($_GET["signup"])) {
                 return $project["id"] == $selectedProjectId;
             }
         );
+
         if (empty($existsProjects)) {
             $content = includeTemplate("templates/error.php", ["error" => "Проект не найден"]);
         } else {
-            $tasksByProject = array_filter(
-                $tasks,
-                function($task) use ($selectedProjectId)
-                {
-                    return $task["project_id"] == $selectedProjectId;
-                }
-            );
+            if ($selectedProjectId == $user) {
+                $tasksByProject = array_filter(
+                    $tasks,
+                    function($task) use ($selectedProjectId)
+                    {
+
+                        return $task["project_id"] == NULL;
+                    }
+                );
+            } else {
+                $tasksByProject = array_filter(
+                    $tasks,
+                    function($task) use ($selectedProjectId)
+                    {
+
+                        return $task["project_id"] == $selectedProjectId;
+                    }
+                );
+            }
             $content = includeTemplate(
                 "templates/index.php",
                 [
@@ -76,47 +91,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
     $data = $_POST;
     $user = getUserData($link, $data);
     $errors = checkAutoFormOnErrors($data, $user);
-
     if (count($errors)) {
         $autorizationPopup = includeTemplate("auth_form.php", ["formsData" => $data, "errors" => $errors]);
         $content = includeTemplate("guest.php", []);
     } else {
-        header("Location: index.php");
+        $projectId = $user[0]["id"];
+        header("Location: index.php?project_id=$projectId");
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["task"])) {
-    $tasksForm = $_POST;
-    $errors = checkTasksFormOnErrors($tasksForm);
-    if ($tasksForm["project"] == 0) {
-        $tasksForm["project"] = NULL;
-    }
-    if ($tasksForm["date"] == "") {
-        $tasksForm["date"] = NULL;
-    }
-    if (isset($_FILES["preview"]["name"])) {
-        $fileName = $_FILES["preview"]["name"];
-        $tmpName = $_FILES["preview"]["tmp_name"];
-        $filePath = __DIR__ . "/";
-        $fileUrl = "/" . $fileName;
-        move_uploaded_file($tmpName, $fileUrl);
-        $tasksForm["file"] = $fileName;
-    }
-    if (count($errors)) {
-        $formPopup = includeTemplate(
-            "templates/form.php",
-            [
-                "tasksForm" => $tasksForm,
-                "errors" => $errors,
-                "projects" => $projects
-            ]
-        );
-    } else {
-        $addNewTask = addNewTask($link, $tasksForm, $user);
-        if($addNewTask) {
-            header("Location: index.php?success=true");
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST["task"])) {
+        $tasksForm = $_POST;
+        $errors = checkTasksFormOnErrors($tasksForm);
+        if ($tasksForm["project"] == $user) {
+            $tasksForm["project"] = NULL;
+        }
+        if ($tasksForm["date"] == "") {
+            $tasksForm["date"] = NULL;
+        }
+        if (isset($_FILES["preview"]["name"])) {
+            $fileName = $_FILES["preview"]["name"];
+            $tmpName = $_FILES["preview"]["tmp_name"];
+            $filePath = __DIR__ . "/";
+            $fileUrl = "/" . $fileName;
+            move_uploaded_file($tmpName, $fileUrl);
+            $tasksForm["file"] = $fileName;
+        }
+        if (count($errors)) {
+            $formPopup = includeTemplate(
+                "templates/form.php",
+                [
+                    "tasksForm" => $tasksForm,
+                    "errors" => $errors,
+                    "projects" => $projects
+                ]
+            );
         } else {
-            $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
+            if (isset($tasksForm["project"])) {
+                $projectId = (int)$tasksForm["project"];
+            } else {
+                $projectId = $user;
+            }
+            $addNewTask = addNewTask($link, $tasksForm, $user);
+            if($addNewTask) {
+                header("Location: index.php?project_id=$projectId&success=true");
+            } else {
+                $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
+            }
+        }
+    } else if (isset($_POST["project"])) {
+        $data = $_POST;
+        $errors = checkProjectFormOnErrors($data, $user, $link);
+        if (count($errors)) {
+            $projectPopup = includeTemplate("templates/project.php", ["formsData" => $data, "errors" => $errors]);
+        } else {
+            $addNewProject = addNewProject($data, $user, $link);
+            $projectId = mysqli_insert_id($link);
+            if($addNewProject) {
+                header("Location: index.php?project_id=$projectId");
+            } else {
+                $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
+            }
         }
     }
 }
