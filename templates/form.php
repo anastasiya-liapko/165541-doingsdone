@@ -10,9 +10,10 @@
       $value = isset($tasksForm["name"]) ? $tasksForm["name"] : ""; ?>
 
       <label class="form__label" for="name">Название <sup>*</sup></label>
-      <p class="form__message"><?=isset($errors["name"]) ? "Заполните это поле" : ""?></p>
 
       <input class="form__input <?=$classname;?>" type="text" name="name" id="name" value="<?=$value;?>" placeholder="Введите название">
+
+      <p class="form__message"><?=isset($errors["name"]) ? "Заполните это поле" : ""?></p>
     </div>
 
     <div class="form__row">
@@ -20,13 +21,14 @@
       $value = isset($tasksForm["project"]) ? $tasksForm["project"] : ""; ?>
 
       <label class="form__label" for="project">Проект <sup>*</sup></label>
-      <p class="form__message"><?=isset($errors["project"]) ? "Заполните это поле" : ""?></p>
 
       <select class="form__input form__input--select <?=$classname;?>" name="project" id="project">
         <?php foreach ($projects as $i => $item): ?>
             <option value="<?=$item["id"]?>"><?=$item["name"] == "Входящие" ? "" : $item["name"]?></option>
         <?php endforeach; ?>
       </select>
+
+      <p class="form__message"><?=isset($errors["project"]) ? "Заполните это поле" : ""?></p>
     </div>
 
     <div class="form__row">
@@ -34,10 +36,12 @@
       $value = isset($tasksForm["date"]) ? $tasksForm["date"] : ""; ?>
 
       <label class="form__label" for="date">Срок выполнения</label>
-      <p class="form__message"><?=isset($errors["date"]) ? "Введите дату и время в формате ГГГГ-ММ-ДД ЧЧ:ММ" : ""?></p>
+
 
       <input class="form__input form__input--date <?=$classname;?>" type="text" name="date" id="date" value="<?=$value;?>"
              placeholder="Введите дату и время">
+
+      <p class="form__message"><?=isset($errors["date"]) ? "Введите дату и время в формате ГГГГ-ММ-ДД ЧЧ:ММ" : ""?></p>
     </div>
 
     <div class="form__row">

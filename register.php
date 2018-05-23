@@ -1,14 +1,8 @@
-<section class="content__side">
-    <p class="content__side-info">Если у вас уже есть аккаунт, авторизуйтесь на сайте</p>
-
-    <a class="button button--transparent content__side-button" href="#">Войти</a>
-</section>
-
 <main class="content__main">
 <?= isset($error) ? $error : "" ?>
     <h2 class="content__main-heading">Регистрация аккаунта</h2>
 
-    <form class="form" action="index.php" enctype="multipart/form-data" method="post">
+    <form class="form" action="index.php?signup" enctype="multipart/form-data" method="post">
     <div class="form__row">
     <?php $classname = isset($errors["email"]) ? "form__input--error" : "";
     $value = isset($formsData["email"]) ? $formsData["email"] : ""; ?>

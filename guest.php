@@ -6,5 +6,5 @@
     <p>После создания аккаунта, пользователь может начать вносить свои дела, деля их по проектам и указывая сроки.</p>
     </div>
 
-    <a class="welcome__button button" href="index.php?register">Зарегистрироваться</a>
+    <a class="welcome__button button" href="index.php?signup">Зарегистрироваться</a>
 </section>
