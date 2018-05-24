@@ -21,7 +21,7 @@
 
         <label class="checkbox">
             <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
-            <input class="checkbox__input visually-hidden show_completed" type="checkbox" <?= isset($showCompleteTasks) == 1 ? "checked" : "" ?>>
+            <input class="checkbox__input visually-hidden show_completed" type="checkbox" value="<?=$showCompleteTasks == 1 ? "checked" : "" ?>">
             <span class="checkbox__text">Показывать выполненные</span>
         </label>
     </div>
@@ -34,7 +34,7 @@
             <?php if ($showCompleteTasks == 1): ?>
             <td class="task__select">
                 <label class="checkbox task__checkbox">
-                    <input class="checkbox__input visually-hidden task__checkbox" name="task_checkbox" type="checkbox" value="<?=$item["id"];?>">
+                    <input class="checkbox__input visually-hidden task__checkbox" name="<?=$item["project_id"]?>" type="checkbox" value="<?=$item["id"];?>">
                     <span class="checkbox__text"><?=$item["name"];?></span>
                 </label>
             </td>
@@ -46,10 +46,10 @@
             <td class="task__date"><?=$item["term_date"];?></td>
             <?php endif; ?>
 
-            <?php if ($showCompleteTasks == 0 && $item["completion_date"] == NULL): ?>
+            <?php if ($showCompleteTasks == 0 && $item["completion_date"] !== NULL): ?>
             <td class="task__select">
                 <label class="checkbox task__checkbox">
-                    <input class="checkbox__input visually-hidden task__checkbox" name="task_checkbox" type="checkbox" value="<?=$item["id"];?>">
+                    <input class="checkbox__input visually-hidden task__checkbox" name="<?=$item["project_id"]?>" type="checkbox" value="<?=$item["id"];?>">
                     <span class="checkbox__text"><?=htmlspecialchars($item["name"]);?></span>
                 </label>
             </td>

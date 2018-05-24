@@ -76,6 +76,54 @@ function addNewUser($databaseLink, $formsData)
 };
 
 /**
+ * Изменяет статус задачи на выполненный
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $taskId Id задачи
+ * @return boolean
+ */
+function changeTaskStatus($databaseLink, int $taskId)
+{
+    $today = date("d.m.Y");
+    $sql = "
+        SELECT
+            `completion_date`
+        FROM
+            `tasks`
+        WHERE
+            `tasks`.`id` = '$taskId'
+    ";
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $array = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+    $completionDate = $array[0]["completion_date"];
+    if ($completionDate == NULL) {
+        $sqlUpdate = "
+            UPDATE
+                `tasks`
+            SET
+                `completion_date` = '$today'
+            WHERE
+                `tasks`.`id` = '$taskId'
+        ";
+    }
+    if ($completionDate !== NULL) {
+        $sqlUpdate = "
+            UPDATE
+                `tasks`
+            SET
+                `completion_date` = NULL
+            WHERE
+                `tasks`.`id` = '$taskId'
+        ";
+    }
+
+    $result = mysqli_query($databaseLink, $sqlUpdate);
+
+    return $result;
+};
+
+/**
  * Производит валидацию формы авторизации
  *
  * @param array $formsData данные из формы
@@ -274,6 +322,36 @@ function getOverdueTasks(array $userTasks): array
     }
 
     return $overdueTasks;
+};
+
+/**
+ * Возвращает список проектов для пользователя
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $taskId Id задачи
+ * @return int Id проекта
+ */
+function getProjectIdByTaskId($databaseLink, int $taskId, int $userId): int
+{
+    $sql = "
+        SELECT
+            `project_id`
+        FROM
+            `tasks`
+        WHERE
+            `tasks`.`id` = '$taskId'
+    ";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $array = mysqli_fetch_all($res, MYSQLI_ASSOC);
+        $projectId = $array[0]["project_id"];
+    }
+
+    if ($projectId == NULL) {
+        $projectId = $userId;
+    }
+
+    return $projectId;
 };
 
 /**

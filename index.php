@@ -16,7 +16,7 @@ if (isset($_GET["signup"])) {
 
 } else if (isset($_SESSION["user"])) {
     $user = $_SESSION["user"]["id"];
-    $showCompleteTasks = rand(0, 1);
+    $showCompleteTasks = 1;
     $projects = getProjectsListForUser($link, $user);
     $projects = array_merge([["name" => "Входящие", "id" => $user]], $projects);
     $tasks = getTasksListForUser($link, $user);
@@ -60,6 +60,19 @@ if (isset($_GET["signup"])) {
 
  } else {
     $content = includeTemplate("guest.php");
+}
+
+if (isset($_GET["show_completed"])) {
+    $showCompleteTasks = intval($_GET["show_completed"]);
+    $showCompleteTasks == 0 ? 1 : 0;
+    header("Location: index.php?project_id=$selectedProjectId&all_tasks");
+}
+
+if (isset($_GET["check"])) {
+    $taskId = intval($_GET["task_id"]);
+    changeTaskStatus($link, $taskId);
+    $projectId = getProjectIdByTaskId($link, $taskId, $user);
+    header("Location: index.php?project_id=$projectId&all_tasks");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
