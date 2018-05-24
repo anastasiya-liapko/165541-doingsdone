@@ -13,10 +13,10 @@
 
     <div class="tasks-controls">
         <nav class="tasks-switch">
-            <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-            <a href="/" class="tasks-switch__item">Повестка дня</a>
-            <a href="/" class="tasks-switch__item">Завтра</a>
-            <a href="/" class="tasks-switch__item">Просроченные</a>
+            <a href="index.php?project_id=<?=$selectedProjectId?>&all_tasks" class="tasks-switch__item <?= isset($_GET["all_tasks"]) ? "tasks-switch__item--active" : "" ?>">Все задачи</a>
+            <a href="index.php?project_id=<?=$selectedProjectId?>&today_tasks" class="tasks-switch__item <?= isset($_GET["today_tasks"]) ? "tasks-switch__item--active" : "" ?>">Повестка дня</a>
+            <a href="index.php?project_id=<?=$selectedProjectId?>&tomorrow_tasks" class="tasks-switch__item <?= isset($_GET["tomorrow_tasks"]) ? "tasks-switch__item--active" : "" ?>">Завтра</a>
+            <a href="index.php?project_id=<?=$selectedProjectId?>&overdue_tasks" class="tasks-switch__item <?= isset($_GET["overdue_tasks"]) ? "tasks-switch__item--active" : "" ?>">Просроченные</a>
         </nav>
 
         <label class="checkbox">
@@ -30,11 +30,11 @@
     <?php if (isset($tasksByProject)): ?>
         <?php foreach ($tasksByProject as $key => $item): ?>
         <tr class="tasks__item task <?= $item["completion_date"] !== NULL ? "task--completed" : "" ?>
-        <?= getHoursCountTillTheDate($item["term_date"]) <= 24 && $item["completion_date"] !== NULL ? "task--important" : "" ?>">
+        <?= getHoursCountTillTheDate($item["term_date"]) <= 24 && $item["term_date"] !== NULL ? "task--important" : "" ?>">
             <?php if ($showCompleteTasks == 1): ?>
             <td class="task__select">
                 <label class="checkbox task__checkbox">
-                    <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
+                    <input class="checkbox__input visually-hidden task__checkbox" name="task_checkbox" type="checkbox" value="<?=$item["id"];?>">
                     <span class="checkbox__text"><?=$item["name"];?></span>
                 </label>
             </td>
@@ -49,7 +49,7 @@
             <?php if ($showCompleteTasks == 0 && $item["completion_date"] == NULL): ?>
             <td class="task__select">
                 <label class="checkbox task__checkbox">
-                    <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
+                    <input class="checkbox__input visually-hidden task__checkbox" name="task_checkbox" type="checkbox" value="<?=$item["id"];?>">
                     <span class="checkbox__text"><?=htmlspecialchars($item["name"]);?></span>
                 </label>
             </td>

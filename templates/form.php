@@ -7,7 +7,7 @@
 
     <div class="form__row">
       <?php $classname = isset($errors["name"]) ? "form__input--error" : "";
-      $value = isset($tasksForm["name"]) ? $tasksForm["name"] : ""; ?>
+      $value = isset($formData["name"]) ? $formData["name"] : ""; ?>
 
       <label class="form__label" for="name">Название <sup>*</sup></label>
 
@@ -18,7 +18,7 @@
 
     <div class="form__row">
       <?php $classname = isset($errors["project"]) ? "form__input--error" : "";
-      $value = isset($tasksForm["project"]) ? $tasksForm["project"] : ""; ?>
+      $value = isset($formData["project"]) ? $formData["project"] : ""; ?>
 
       <label class="form__label" for="project">Проект <sup>*</sup></label>
 
@@ -33,7 +33,7 @@
 
     <div class="form__row">
       <?php $classname = isset($errors["date"]) ? "form__input--error" : "";
-      $value = isset($tasksForm["date"]) ? $tasksForm["date"] : ""; ?>
+      $value = isset($formData["date"]) ? $formData["date"] : ""; ?>
 
       <label class="form__label" for="date">Срок выполнения</label>
 

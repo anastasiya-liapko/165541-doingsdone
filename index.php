@@ -13,6 +13,7 @@ if (isset($_GET["logout"])) {
 
 if (isset($_GET["signup"])) {
     $content = includeTemplate("register.php");
+
 } else if (isset($_SESSION["user"])) {
     $user = $_SESSION["user"]["id"];
     $showCompleteTasks = rand(0, 1);
@@ -21,13 +22,11 @@ if (isset($_GET["signup"])) {
     $tasks = getTasksListForUser($link, $user);
     $formPopup = includeTemplate("templates/form.php",["projects" => $projects]);
     $projectPopup = includeTemplate("templates/project.php");
-
     if (!$link) {
         $error = mysqli_connect_error();
         $content = includeTemplate("templates/error.php", ["error" => $error]);
     } else {
         $selectedProjectId = isset($_GET["project_id"]) ? intval($_GET["project_id"]) : $user;
-
         $existsProjects = array_filter(
             $projects,
             function($project) use ($selectedProjectId)
@@ -35,38 +34,30 @@ if (isset($_GET["signup"])) {
                 return $project["id"] == $selectedProjectId;
             }
         );
-
         if (empty($existsProjects)) {
             $content = includeTemplate("templates/error.php", ["error" => "Проект не найден"]);
         } else {
-            if ($selectedProjectId == $user) {
-                $tasksByProject = array_filter(
-                    $tasks,
-                    function($task) use ($selectedProjectId)
-                    {
-
-                        return $task["project_id"] == NULL;
-                    }
-                );
-            } else {
-                $tasksByProject = array_filter(
-                    $tasks,
-                    function($task) use ($selectedProjectId)
-                    {
-
-                        return $task["project_id"] == $selectedProjectId;
-                    }
-                );
+            $filteredTasks = [];
+            if (isset($_GET["all_tasks"])) {
+                $filteredTasks = getTasksListByProjectId($tasks, $user, $selectedProjectId);
+            } else if (isset($_GET["today_tasks"])) {
+                $filteredTasks = getTodayTasks($tasks);
+            } else if (isset($_GET["tomorrow_tasks"])) {
+                $filteredTasks = getTomorrowTasks($tasks);
+            } else if (isset($_GET["overdue_tasks"])) {
+                $filteredTasks = getOverdueTasks($tasks);
             }
             $content = includeTemplate(
                 "templates/index.php",
                 [
-                    "tasksByProject" => $tasksByProject,
-                    "showCompleteTasks" => $showCompleteTasks
+                    "tasksByProject" => $filteredTasks,
+                    "showCompleteTasks" => $showCompleteTasks,
+                    "selectedProjectId" => $selectedProjectId
                 ]
             );
         }
     }
+
  } else {
     $content = includeTemplate("guest.php");
 }
@@ -96,51 +87,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["autorization"])) {
         $content = includeTemplate("guest.php", []);
     } else {
         $projectId = $user[0]["id"];
-        header("Location: index.php?project_id=$projectId");
+        header("Location: index.php?project_id=$projectId&all_tasks");
     }
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     if (isset($_POST["task"])) {
-        $tasksForm = $_POST;
-        $errors = checkTasksFormOnErrors($tasksForm);
-        if ($tasksForm["project"] == $user) {
-            $tasksForm["project"] = NULL;
-        }
-        if ($tasksForm["date"] == "") {
-            $tasksForm["date"] = NULL;
-        }
-        if (isset($_FILES["preview"]["name"])) {
-            $fileName = $_FILES["preview"]["name"];
-            $tmpName = $_FILES["preview"]["tmp_name"];
-            $filePath = __DIR__ . "/";
-            $fileUrl = "/" . $fileName;
-            move_uploaded_file($tmpName, $fileUrl);
-            $tasksForm["file"] = $fileName;
-        }
+        $data = $_POST;
+        $errors = checkTasksFormOnErrors($data);
+        $data["project"] == $user ? $data["project"] = NULL : $data["project"];
+        $data["date"] == "" ? $data["date"] = NULL : $data["date"];
+        $data["file"] = getFile();
         if (count($errors)) {
             $formPopup = includeTemplate(
                 "templates/form.php",
                 [
-                    "tasksForm" => $tasksForm,
+                    "formData" => $data,
                     "errors" => $errors,
                     "projects" => $projects
                 ]
             );
         } else {
-            if (isset($tasksForm["project"])) {
-                $projectId = (int)$tasksForm["project"];
-            } else {
-                $projectId = $user;
-            }
-            $addNewTask = addNewTask($link, $tasksForm, $user);
+            isset($data["project"]) ? $projectId = (int)$data["project"] : $projectId = $user;
+            $addNewTask = addNewTask($link, $data, $user);
             if($addNewTask) {
-                header("Location: index.php?project_id=$projectId&success=true");
+                header("Location: index.php?project_id=$projectId&all_tasks&success=true");
             } else {
                 $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
             }
         }
-    } else if (isset($_POST["project"])) {
+    }
+
+    else if (isset($_POST["project"])) {
         $data = $_POST;
         $errors = checkProjectFormOnErrors($data, $user, $link);
         if (count($errors)) {
@@ -149,12 +128,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $addNewProject = addNewProject($data, $user, $link);
             $projectId = mysqli_insert_id($link);
             if($addNewProject) {
-                header("Location: index.php?project_id=$projectId");
+                header("Location: index.php?project_id=$projectId&all_tasks");
             } else {
                 $content = includeTemplate("templates/error.php", ["error" => mysqli_error($link)]);
             }
         }
     }
+
 }
 
 $layoutContentParameters = [
@@ -162,23 +142,13 @@ $layoutContentParameters = [
     "title" => "Дела в порядке",
     "autorizationPopup" => $autorizationPopup
 ];
-if (isset($errors)) {
-    $layoutContentParameters = array_merge(["errors" => $errors], $layoutContentParameters);
-}
-if (isset($formPopup)) {
-    $layoutContentParameters = array_merge(["formPopup" => $formPopup], $layoutContentParameters);
-}
-if (isset($projects)) {
-    $layoutContentParameters = array_merge(["projects" => $projects], $layoutContentParameters);
-}
-if (isset($tasks)) {
-    $layoutContentParameters = array_merge(["tasks" => $tasks], $layoutContentParameters);
-}
-if (isset($selectedProjectId)) {
-    $layoutContentParameters = array_merge(["selectedProjectId" => $selectedProjectId], $layoutContentParameters);
-}
-if (isset($projectPopup)) {
-    $layoutContentParameters = array_merge(["projectPopup" => $projectPopup], $layoutContentParameters);
-}
+
+isset($errors) ? $layoutContentParameters = array_merge(["errors" => $errors], $layoutContentParameters) : "";
+isset($formPopup) ? $layoutContentParameters = array_merge(["formPopup" => $formPopup], $layoutContentParameters) : "";
+isset($projects) ? $layoutContentParameters = array_merge(["projects" => $projects], $layoutContentParameters) : "";
+isset($tasks) ? $layoutContentParameters = array_merge(["tasks" => $tasks], $layoutContentParameters) : "";
+isset($selectedProjectId) ? $layoutContentParameters = array_merge(["selectedProjectId" => $selectedProjectId], $layoutContentParameters) : "";
+isset($projectPopup) ? $layoutContentParameters = array_merge(["projectPopup" => $projectPopup], $layoutContentParameters) : "";
+
 $layoutContent = includeTemplate("templates/layout.php", $layoutContentParameters);
 print($layoutContent);
