@@ -24,7 +24,9 @@ function addNewProject($formsData, int $userId, $databaseLink)
     $result = mysqli_stmt_execute($stmt);
 
     return $result;
-};
+}
+
+;
 
 /**
  * Добавляет новую задачу
@@ -44,11 +46,14 @@ function addNewTask($databaseLink, $formsData, int $userId)
     ";
 
     $stmt = mysqli_prepare($databaseLink, $sql);
-    mysqli_stmt_bind_param($stmt, 'sssdd', $formsData["name"], $formsData["file"], $formsData["date"], $formsData["project"], $userId);
+    mysqli_stmt_bind_param($stmt, 'sssdd', $formsData["name"], $formsData["file"], $formsData["date"],
+        $formsData["project"], $userId);
     $result = mysqli_stmt_execute($stmt);
 
     return $result;
-};
+}
+
+;
 
 /**
  * Добавляет нового пользователя
@@ -73,7 +78,9 @@ function addNewUser($databaseLink, $formsData)
     $result = mysqli_stmt_execute($stmt);
 
     return $result;
-};
+}
+
+;
 
 /**
  * Изменяет статус задачи на выполненный
@@ -97,7 +104,7 @@ function changeTaskStatus($databaseLink, int $taskId)
         $array = mysqli_fetch_all($res, MYSQLI_ASSOC);
     }
     $completionDate = $array[0]["completion_date"];
-    if ($completionDate == NULL) {
+    if ($completionDate == null) {
         $sqlUpdate = "
             UPDATE
                 `tasks`
@@ -107,7 +114,7 @@ function changeTaskStatus($databaseLink, int $taskId)
                 `tasks`.`id` = '$taskId'
         ";
     }
-    if ($completionDate !== NULL) {
+    if ($completionDate !== null) {
         $sqlUpdate = "
             UPDATE
                 `tasks`
@@ -121,7 +128,9 @@ function changeTaskStatus($databaseLink, int $taskId)
     $result = mysqli_query($databaseLink, $sqlUpdate);
 
     return $result;
-};
+}
+
+;
 
 /**
  * Производит валидацию формы авторизации
@@ -146,8 +155,7 @@ function checkAutoFormOnErrors(array $formsData, array $userData): array
             if (password_verify($formsData["password"], $key["password"])) {
                 $_SESSION["user"] = $key;
 
-            }
-            else {
+            } else {
                 $errors["password"] = "Неверный пароль";
             }
         }
@@ -156,7 +164,9 @@ function checkAutoFormOnErrors(array $formsData, array $userData): array
     }
 
     return $errors;
-};
+}
+
+;
 
 /**
  * Производит валидацию формы добавления проекта
@@ -196,7 +206,9 @@ function checkProjectFormOnErrors(array $formsData, int $userId, $databaseLink):
     }
 
     return $errors;
-};
+}
+
+;
 
 /**
  * Производит валидацию формы регистрации
@@ -228,7 +240,7 @@ function checkRegFormOnErrors(array $formsData, $databaseLink): array
     }
 
     foreach ($formsData as $key => $value) {
-        foreach($emails as $item) {
+        foreach ($emails as $item) {
             if ($key == "email" && $value == $item["email"]) {
                 $errors[$key] = "Данный email уже зарегистрирован";
             }
@@ -242,7 +254,9 @@ function checkRegFormOnErrors(array $formsData, $databaseLink): array
     }
 
     return $errors;
-};
+}
+
+;
 
 /**
  * Производит валидацию формы задач
@@ -268,7 +282,9 @@ function checkTasksFormOnErrors(array $formsData): array
     }
 
     return $errors;
-};
+}
+
+;
 
 /**
  * Возвращает путь к файлу
@@ -286,7 +302,9 @@ function getFile()
 
         return $fileName;
     }
-};
+}
+
+;
 
 /**
  * Возвращает количество часов, оставшееся до каждой из дат
@@ -296,14 +314,16 @@ function getFile()
  */
 function getHoursCountTillTheDate($date)
 {
-    if ($date !== NULL) {
+    if ($date !== null) {
         $ts = time();
         $endTs = strtotime($date);
         $tsDiff = $endTs - $ts;
         $hoursUntilEnd = floor($tsDiff / SECS_IN_HOUR);
         return $hoursUntilEnd;
     }
-};
+}
+
+;
 
 /**
  * Возвращает задачи, которые не были выполнены и у которых истек срок
@@ -316,13 +336,15 @@ function getOverdueTasks(array $userTasks): array
     $overdueTasks = [];
 
     foreach ($userTasks as $i => $task) {
-        if (getHoursCountTillTheDate($task["term_date"]) < 0 && $task["completion_date"] == NULL) {
+        if (getHoursCountTillTheDate($task["term_date"]) < 0 && $task["completion_date"] == null) {
             $overdueTasks[$i] = $task;
         }
     }
 
     return $overdueTasks;
-};
+}
+
+;
 
 /**
  * Возвращает список проектов для пользователя
@@ -347,12 +369,14 @@ function getProjectIdByTaskId($databaseLink, int $taskId, int $userId): int
         $projectId = $array[0]["project_id"];
     }
 
-    if ($projectId == NULL) {
+    if ($projectId == null) {
         $projectId = $userId;
     }
 
     return $projectId;
-};
+}
+
+;
 
 /**
  * Возвращает список проектов для пользователя
@@ -380,7 +404,9 @@ function getProjectsListForUser($databaseLink, int $userId)
     }
 
     return $projectsList;
-};
+}
+
+;
 
 /**
  * Возвращает количество задач по имени проекта
@@ -400,7 +426,9 @@ function getTasksCountByProjectName(string $projectName = DEFAULT_PROJECT, array
     }
 
     return $result;
-};
+}
+
+;
 
 /**
  * Возвращает список задач для пользователя
@@ -417,23 +445,23 @@ function getTasksListByProjectId(array $userTasks, int $userId, int $projectId):
     if ($projectId == $userId) {
         $tasksByProject = array_filter(
             $userTasks,
-            function($task) use ($projectId)
-            {
-                return $task["project_id"] == NULL;
+            function ($task) use ($projectId) {
+                return $task["project_id"] == null;
             }
         );
     } else {
         $tasksByProject = array_filter(
             $userTasks,
-            function($task) use ($projectId)
-            {
+            function ($task) use ($projectId) {
                 return $task["project_id"] == $projectId;
             }
         );
     }
 
     return $tasksByProject;
-};
+}
+
+;
 
 /**
  * Возвращает список задач для пользователя
@@ -463,13 +491,15 @@ function getTasksListForUser($databaseLink, $userId)
     }
 
     foreach ($tasks as $i => $task) {
-        if ($task["term_date"] !== NULL) {
+        if ($task["term_date"] !== null) {
             $tasks[$i]["term_date"] = date("H:i d.m.Y", strtotime($task["term_date"]));
         }
     }
 
     return $tasks;
-};
+}
+
+;
 
 /**
  * Возвращает задачи на сегодня
@@ -484,15 +514,14 @@ function getTodayTasks(array $userTasks): array
     $todayTasks = [];
 
     foreach ($userTasks as $i => $task) {
-        if ($task["term_date"] !== NULL) {
+        if ($task["term_date"] !== null) {
             $tasks[$i]["term_date"] = date("d.m.Y", strtotime($task["term_date"]));
         }
     }
 
     $todayTasks = array_filter(
         $tasks,
-        function($task) use ($today)
-        {
+        function ($task) use ($today) {
             return $task["term_date"] == $today;
         }
     );
@@ -506,7 +535,9 @@ function getTodayTasks(array $userTasks): array
     }
 
     return $todayTasks;
-};
+}
+
+;
 
 /**
  * Возвращает задачи на завтра
@@ -516,20 +547,19 @@ function getTodayTasks(array $userTasks): array
  */
 function getTomorrowTasks(array $userTasks): array
 {
-    $tomorrow = date("d.m.Y", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
+    $tomorrow = date("d.m.Y", mktime(0, 0, 0, date("m"), date("d") + 1, date("Y")));
     $tasks = $userTasks;
     $tomorrowTasks = [];
 
     foreach ($userTasks as $i => $task) {
-        if ($task["term_date"] !== NULL) {
+        if ($task["term_date"] !== null) {
             $tasks[$i]["term_date"] = date("d.m.Y", strtotime($task["term_date"]));
         }
     }
 
     $tomorrowTasks = array_filter(
         $tasks,
-        function($task) use ($tomorrow)
-        {
+        function ($task) use ($tomorrow) {
             return $task["term_date"] == $tomorrow;
         }
     );
@@ -543,7 +573,9 @@ function getTomorrowTasks(array $userTasks): array
     }
 
     return $tomorrowTasks;
-};
+}
+
+;
 
 /**
  * Возвращает данные пользователя
@@ -570,7 +602,9 @@ function getUserData($databaseLink, array $formsData): array
     }
 
     return $userData;
-};
+}
+
+;
 
 /**
  * Функция отрисовки шаблона с данными
@@ -592,7 +626,9 @@ function includeTemplate(string $template, array $data = []): string
     }
 
     return $html;
-};
+}
+
+;
 
 /**
  * Производит валидацию даты
@@ -605,4 +641,6 @@ function validateDate(string $date, string $format = "Y-m-d H:i")
 {
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
-};
+}
+
+;
