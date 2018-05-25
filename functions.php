@@ -464,7 +464,7 @@ function getTasksListForUser($databaseLink, $userId)
 
     foreach ($tasks as $i => $task) {
         if ($task["term_date"] !== NULL) {
-            $tasks[$i]["term_date"] = date("d.m.Y", strtotime($task["term_date"]));
+            $tasks[$i]["term_date"] = date("H:i d.m.Y", strtotime($task["term_date"]));
         }
     }
 
@@ -477,16 +477,33 @@ function getTasksListForUser($databaseLink, $userId)
  * @param array $userTasks Массив задач пользователя
  * @return array Массив задач
  */
-function getTodayTasks(array $userTasks)
+function getTodayTasks(array $userTasks): array
 {
     $today = date("d.m.Y");
+    $tasks = $userTasks;
+    $todayTasks = [];
+
+    foreach ($userTasks as $i => $task) {
+        if ($task["term_date"] !== NULL) {
+            $tasks[$i]["term_date"] = date("d.m.Y", strtotime($task["term_date"]));
+        }
+    }
+
     $todayTasks = array_filter(
-        $userTasks,
+        $tasks,
         function($task) use ($today)
         {
             return $task["term_date"] == $today;
         }
     );
+
+    foreach ($todayTasks as $i => $task) {
+        foreach ($userTasks as $key => $value) {
+            if ($task["id"] == $value["id"]) {
+                $todayTasks[$i]["term_date"] = $value["term_date"];
+            }
+        }
+    }
 
     return $todayTasks;
 };
@@ -500,13 +517,30 @@ function getTodayTasks(array $userTasks)
 function getTomorrowTasks(array $userTasks): array
 {
     $tomorrow = date("d.m.Y", mktime(0, 0, 0, date("m"), date("d")+1, date("Y")));
+    $tasks = $userTasks;
+    $tomorrowTasks = [];
+
+    foreach ($userTasks as $i => $task) {
+        if ($task["term_date"] !== NULL) {
+            $tasks[$i]["term_date"] = date("d.m.Y", strtotime($task["term_date"]));
+        }
+    }
+
     $tomorrowTasks = array_filter(
-        $userTasks,
+        $tasks,
         function($task) use ($tomorrow)
         {
             return $task["term_date"] == $tomorrow;
         }
     );
+
+    foreach ($tomorrowTasks as $i => $task) {
+        foreach ($userTasks as $key => $value) {
+            if ($task["id"] == $value["id"]) {
+                $tomorrowTasks[$i]["term_date"] = $value["term_date"];
+            }
+        }
+    }
 
     return $tomorrowTasks;
 };

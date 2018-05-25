@@ -46,7 +46,7 @@
             <td class="task__date"><?=$item["term_date"];?></td>
             <?php endif; ?>
 
-            <?php if ($showCompleteTasks == 0 && $item["completion_date"] !== NULL): ?>
+            <?php if ($showCompleteTasks == 0 && $item["completion_date"] == NULL): ?>
             <td class="task__select">
                 <label class="checkbox task__checkbox">
                     <input class="checkbox__input visually-hidden task__checkbox" name="<?=$item["project_id"]?>" type="checkbox" value="<?=$item["id"];?>">

@@ -16,7 +16,7 @@ if (isset($_GET["signup"])) {
 
 } else if (isset($_SESSION["user"])) {
     $user = $_SESSION["user"]["id"];
-    $showCompleteTasks = 1;
+    $showCompleteTasks = rand(0, 1);
     $projects = getProjectsListForUser($link, $user);
     $projects = array_merge([["name" => "Входящие", "id" => $user]], $projects);
     $tasks = getTasksListForUser($link, $user);
@@ -64,7 +64,6 @@ if (isset($_GET["signup"])) {
 
 if (isset($_GET["show_completed"])) {
     $showCompleteTasks = intval($_GET["show_completed"]);
-    $showCompleteTasks == 0 ? 1 : 0;
     header("Location: index.php?project_id=$selectedProjectId&all_tasks");
 }
 
