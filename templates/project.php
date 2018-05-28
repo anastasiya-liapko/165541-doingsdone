@@ -1,4 +1,4 @@
-<div class="modal" <?= isset($errors) ? "" : "hidden" ?> id="project_add">
+<div class="modal" <?= isset($errors) ? "" : "hidden"; ?> id="project_add">
     <button class="modal__close" type="button" name="button">Закрыть</button>
 
     <h2 class="modal__heading">Добавление проекта</h2>
@@ -9,10 +9,10 @@
             $value = isset($formsData["name"]) ? $formsData["name"] : ""; ?>
             <label class="form__label" for="project_name">Название <sup>*</sup></label>
 
-            <input class="form__input <?= $classname ?>" type="text" name="name" id="project_name" value="<?= $value ?>"
+            <input class="form__input <?= $classname; ?>" type="text" name="name" id="project_name" value="<?= $value; ?>"
                    placeholder="Введите название проекта">
 
-            <p class="form__message"><?= isset($errors["name"]) ? $errors["name"] : "" ?></p>
+            <p class="form__message"><?= isset($errors["name"]) ? $errors["name"] : ""; ?></p>
         </div>
 
         <div class="form__row form__row--controls">

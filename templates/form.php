@@ -1,4 +1,4 @@
-<div class="modal" <?= isset($errors) ? "" : "hidden" ?> id="task_add">
+<div class="modal" <?= isset($errors) ? "" : "hidden"; ?> id="task_add">
     <button class="modal__close" type="button" name="button" href="/">Закрыть</button>
 
     <h2 class="modal__heading">Добавление задачи</h2>
@@ -14,7 +14,7 @@
             <input class="form__input <?= $classname; ?>" type="text" name="name" id="name" value="<?= $value; ?>"
                    placeholder="Введите название">
 
-            <p class="form__message"><?= isset($errors["name"]) ? "Заполните это поле" : "" ?></p>
+            <p class="form__message"><?= isset($errors["name"]) ? "Заполните это поле" : ""; ?></p>
         </div>
 
         <div class="form__row">
@@ -25,11 +25,11 @@
 
             <select class="form__input form__input--select <?= $classname; ?>" name="project" id="project">
                 <?php foreach ($projects as $i => $item): ?>
-                    <option value="<?= $item["id"] ?>"><?= $item["name"] == "Входящие" ? "" : $item["name"] ?></option>
+                    <option value="<?= $item["id"] ?>"><?= $item["name"] == "Входящие" ? "" : $item["name"]; ?></option>
                 <?php endforeach; ?>
             </select>
 
-            <p class="form__message"><?= isset($errors["project"]) ? "Заполните это поле" : "" ?></p>
+            <p class="form__message"><?= isset($errors["project"]) ? "Заполните это поле" : ""; ?></p>
         </div>
 
         <div class="form__row">
@@ -43,7 +43,7 @@
                    value="<?= $value; ?>"
                    placeholder="Введите дату и время">
 
-            <p class="form__message"><?= isset($errors["date"]) ? "Введите дату и время в формате ГГГГ-ММ-ДД ЧЧ:ММ" : "" ?></p>
+            <p class="form__message"><?= isset($errors["date"]) ? "Введите дату и время в формате ГГГГ-ММ-ДД ЧЧ:ММ" : ""; ?></p>
         </div>
 
         <div class="form__row">
