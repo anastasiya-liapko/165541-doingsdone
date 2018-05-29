@@ -29,8 +29,8 @@
             <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
             <input class="checkbox__input visually-hidden show_completed" type="checkbox"
                    value="<?= isset($_COOKIE["showCompleteTasks"]) && $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>"
-                    <?= !isset($_COOKIE["showCompleteTasks"]) ? "checked" : ""; ?>
-                    <?= isset($_COOKIE["showCompleteTasks"]) && $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>>
+                <?= !isset($_COOKIE["showCompleteTasks"]) ? "checked" : ""; ?>
+                <?= isset($_COOKIE["showCompleteTasks"]) && $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>>
             <span class="checkbox__text">Показывать выполненные</span>
         </label>
     </div>
@@ -45,7 +45,7 @@
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden task__checkbox"
                                        name="<?= $item["project_id"]; ?>" type="checkbox" value="<?= $item["id"]; ?>"
-                                        <?= $item["completion_date"] !== null ? "checked" : ""; ?>>
+                                    <?= $item["completion_date"] !== null ? "checked" : ""; ?>>
                                 <span class="checkbox__text"><?= htmlspecialchars($item["name"]); ?></span>
                             </label>
                         </td>
@@ -63,7 +63,7 @@
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden task__checkbox"
                                        name="<?= $item["project_id"] ?>" type="checkbox" value="<?= $item["id"]; ?>"
-                                        <?= $item["completion_date"] !== null ? "checked" : ""; ?>>
+                                    <?= $item["completion_date"] !== null ? "checked" : ""; ?>>
                                 <span class="checkbox__text"><?= htmlspecialchars($item["name"]); ?></span>
                             </label>
                         </td>
