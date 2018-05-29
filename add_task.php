@@ -1,8 +1,8 @@
 <?php
 $data = $_POST;
 $errors = checkTasksFormOnErrors($data);
-$data["project"] == $userId ? $data["project"] = null : $data["project"];
-$data["date"] == "" ? $data["date"] = null : $data["date"];
+$data["project"] === $userId ? $data["project"] = null : $data["project"];
+$data["date"] === "" ? $data["date"] = null : $data["date"];
 $data["file"] = getFile();
 if (count($errors)) {
     $formPopup = includeTemplate(

@@ -28,9 +28,9 @@
         <label class="checkbox">
             <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
             <input class="checkbox__input visually-hidden show_completed" type="checkbox"
-                   value="<?= isset($_COOKIE["showCompleteTasks"]) && $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>"
+                   value="<?= isset($_COOKIE["showCompleteTasks"]) && (int)$_COOKIE["showCompleteTasks"] === 1 ? "checked" : ""; ?>"
                 <?= !isset($_COOKIE["showCompleteTasks"]) ? "checked" : ""; ?>
-                <?= isset($_COOKIE["showCompleteTasks"]) && $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>>
+                <?= isset($_COOKIE["showCompleteTasks"]) && (int)$_COOKIE["showCompleteTasks"] === 1 ? "checked" : ""; ?>>
             <span class="checkbox__text">Показывать выполненные</span>
         </label>
     </div>
@@ -40,7 +40,7 @@
             <?php foreach ($tasksByProject as $key => $item): ?>
                 <tr class="tasks__item task <?= $item["completion_date"] !== null ? "task--completed" : ""; ?>
                 <?= getHoursCountTillTheDate($item["term_date"]) <= 24 && $item["term_date"] !== null ? "task--important" : ""; ?>">
-                    <?php if ((isset($_COOKIE["showCompleteTasks"]) && $_COOKIE["showCompleteTasks"] == 1) || !isset($_COOKIE["showCompleteTasks"])): ?>
+                    <?php if ((isset($_COOKIE["showCompleteTasks"]) && (int)$_COOKIE["showCompleteTasks"] === 1) || !isset($_COOKIE["showCompleteTasks"])): ?>
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden task__checkbox"
@@ -58,7 +58,7 @@
                         <td class="task__date"><?= htmlspecialchars($item["term_date"]); ?></td>
                     <?php endif; ?>
 
-                    <?php if (isset($_COOKIE["showCompleteTasks"]) && $_COOKIE["showCompleteTasks"] == 0 && $item["completion_date"] == null): ?>
+                    <?php if (isset($_COOKIE["showCompleteTasks"]) && (int)$_COOKIE["showCompleteTasks"] === 0 && $item["completion_date"] === null): ?>
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden task__checkbox"

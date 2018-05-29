@@ -104,7 +104,7 @@ function changeTaskStatus($databaseLink, int $taskId)
         $array = mysqli_fetch_all($res, MYSQLI_ASSOC);
     }
     $completionDate = $array[0]["completion_date"];
-    if ($completionDate == null) {
+    if ($completionDate === null) {
         $sqlUpdate = "
             UPDATE
                 `tasks`
@@ -200,7 +200,7 @@ function checkProjectFormOnErrors(array $formsData, int $userId, $databaseLink):
         $userProjects = mysqli_fetch_all($res, MYSQLI_ASSOC);
     }
     foreach ($userProjects as $item) {
-        if ($formsData["name"] == $item["name"]) {
+        if ($formsData["name"] === $item["name"]) {
             $errors["name"] = "Такой проект уже существует";
         }
     }
@@ -241,14 +241,14 @@ function checkRegFormOnErrors(array $formsData, $databaseLink): array
 
     foreach ($formsData as $key => $value) {
         foreach ($emails as $item) {
-            if ($key == "email" && $value == $item["email"]) {
+            if ($key === "email" && $value === $item["email"]) {
                 $errors[$key] = "Данный email уже зарегистрирован";
             }
         }
     }
 
     foreach ($formsData as $key => $value) {
-        if ($key == "email" && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+        if ($key === "email" && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $errors[$key] = "E-mail введён некорректно";
         }
     }
@@ -276,7 +276,7 @@ function checkTasksFormOnErrors(array $formsData): array
     }
 
     foreach ($formsData as $key => $value) {
-        if ($key == "date" && !empty($value) && !validateDate($value)) {
+        if ($key === "date" && !empty($value) && !validateDate($value)) {
             $errors[$key] = "Дата должна быть корректной";
         }
     }
@@ -369,7 +369,7 @@ function getOverdueTasks(array $userTasks): array
     $overdueTasks = [];
 
     foreach ($userTasks as $i => $task) {
-        if (getHoursCountTillTheDate($task["term_date"]) < 0 && $task["completion_date"] == null) {
+        if (getHoursCountTillTheDate($task["term_date"]) < 0 && $task["completion_date"] === null) {
             $overdueTasks[$i] = $task;
         }
     }
@@ -402,7 +402,7 @@ function getProjectIdByTaskId($databaseLink, int $taskId, int $userId): int
         $projectId = $array[0]["project_id"];
     }
 
-    if ($projectId == null) {
+    if ($projectId === null) {
         $projectId = $userId;
     }
 
@@ -453,7 +453,7 @@ function getTasksCountByProjectName(string $projectName = DEFAULT_PROJECT, array
     $result = 0;
 
     foreach ($tasks as $task) {
-        if ($projectName == $task["project_name"] || ($projectName == DEFAULT_PROJECT && empty($task["project_name"]))) {
+        if ($projectName === $task["project_name"] || ($projectName === DEFAULT_PROJECT && empty($task["project_name"]))) {
             $result++;
         }
     }
@@ -475,18 +475,18 @@ function getTasksListByProjectId(array $userTasks, int $userId, int $projectId):
 {
     $tasksByProject = [];
 
-    if ($projectId == $userId) {
+    if ($projectId === $userId) {
         $tasksByProject = array_filter(
             $userTasks,
             function ($task) use ($projectId) {
-                return $task["project_id"] == null;
+                return $task["project_id"] === null;
             }
         );
     } else {
         $tasksByProject = array_filter(
             $userTasks,
             function ($task) use ($projectId) {
-                return $task["project_id"] == $projectId;
+                return (int)$task["project_id"] === $projectId;
             }
         );
     }
@@ -555,13 +555,13 @@ function getTodayTasks(array $userTasks): array
     $todayTasks = array_filter(
         $tasks,
         function ($task) use ($today) {
-            return $task["term_date"] == $today;
+            return $task["term_date"] === $today;
         }
     );
 
     foreach ($todayTasks as $i => $task) {
         foreach ($userTasks as $key => $value) {
-            if ($task["id"] == $value["id"]) {
+            if ($task["id"] === $value["id"]) {
                 $todayTasks[$i]["term_date"] = $value["term_date"];
             }
         }
@@ -593,13 +593,13 @@ function getTomorrowTasks(array $userTasks): array
     $tomorrowTasks = array_filter(
         $tasks,
         function ($task) use ($tomorrow) {
-            return $task["term_date"] == $tomorrow;
+            return $task["term_date"] === $tomorrow;
         }
     );
 
     foreach ($tomorrowTasks as $i => $task) {
         foreach ($userTasks as $key => $value) {
-            if ($task["id"] == $value["id"]) {
+            if ($task["id"] === $value["id"]) {
                 $tomorrowTasks[$i]["term_date"] = $value["term_date"];
             }
         }
@@ -671,7 +671,7 @@ function includeTemplate(string $template, array $data = []): string
 function validateDate(string $date, string $format = "Y-m-d H:i")
 {
     $d = DateTime::createFromFormat($format, $date);
-    return $d && $d->format($format) == $date;
+    return $d && $d->format($format) === $date;
 }
 
 ;
