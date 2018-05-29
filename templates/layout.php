@@ -69,6 +69,7 @@
 
                     <nav class="main-navigation">
                         <ul class="main-navigation__list">
+                        <?php if (isset($projects)): ?>
                             <?php foreach ($projects as $item): ?>
                                 <li class="main-navigation__list-item
                                 <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : ""; ?>">
@@ -78,6 +79,7 @@
                                             $tasks); ?></span>
                                 </li>
                             <?php endforeach; ?>
+                        <?php endif; ?>
                         </ul>
                     </nav>
 
@@ -158,9 +160,9 @@
 <script src="script.js"></script>
 
 <div class="form-popup">
-    <?= $autorizationPopup; ?>
-    <?= isset($formPopup) ? $formPopup : ""; ?>
-    <?= isset($projectPopup) ? $projectPopup : ""; ?>
+    <?= $autorizationPopup ?? ""; ?>
+    <?= $formPopup ?? ""; ?>
+    <?= $projectPopup ?? ""; ?>
 </div>
 
 </body>
