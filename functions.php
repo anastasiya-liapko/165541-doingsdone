@@ -307,6 +307,39 @@ function getFile()
 ;
 
 /**
+ * Возвращает список отфильтрованных задач
+ *
+ * @param array $userTasks массив всех задач пользователя
+ * @param int $userId Id пользователя
+ * @param int $selectedProjectId Id выбранного проекта
+ * @return array Массив задач
+ */
+function getFilteredTasks(array $userTasks, int $userId, int $selectedProjectId): array
+{
+    $filteredTasks = [];
+
+    if (isset($_GET["all_tasks"])) {
+        $filteredTasks = getTasksListByProjectId($userTasks, $userId, $selectedProjectId);
+    } else {
+        if (isset($_GET["today_tasks"])) {
+            $filteredTasks = getTodayTasks($userTasks);
+        } else {
+            if (isset($_GET["tomorrow_tasks"])) {
+                $filteredTasks = getTomorrowTasks($userTasks);
+            } else {
+                if (isset($_GET["overdue_tasks"])) {
+                    $filteredTasks = getOverdueTasks($userTasks);
+                }
+            }
+        }
+    }
+
+    return $filteredTasks;
+}
+
+;
+
+/**
  * Возвращает количество часов, оставшееся до каждой из дат
  *
  * @param $date дата завершения задачи
@@ -621,8 +654,6 @@ function includeTemplate(string $template, array $data = []): string
         require $template;
         $html = ob_get_contents();
         ob_end_clean();
-    } else {
-        $html = "";
     }
 
     return $html;

@@ -1,4 +1,4 @@
-<div class="modal" <?= isset($errors) ? "" : "hidden" ?> id="user_login">
+<div class="modal" <?= isset($errors) ? "" : "hidden"; ?> id="user_login">
     <button class="modal__close" type="button" name="button">Закрыть</button>
 
     <h2 class="modal__heading">Вход на сайт</h2>
@@ -10,7 +10,7 @@
             <label class="form__label" for="email">E-mail <sup>*</sup></label>
             <input class="form__input <?= $classname; ?>" type="text" name="email" id="email" value="<?= $value; ?>"
                    placeholder="Введите e-mail">
-            <p class="form__message"><?= isset($errors["email"]) ? $errors["email"] : "" ?></p>
+            <p class="form__message"><?= isset($errors["email"]) ? $errors["email"] : ""; ?></p>
         </div>
 
         <div class="form__row">
@@ -19,7 +19,7 @@
             <label class="form__label" for="password">Пароль <sup>*</sup></label>
             <input class="form__input <?= $classname; ?>" type="password" name="password" id="password" value=""
                    placeholder="Введите пароль">
-            <p class="form__message"><?= isset($errors["password"]) ? $errors["password"] : "" ?></p>
+            <p class="form__message"><?= isset($errors["password"]) ? $errors["password"] : ""; ?></p>
         </div>
 
         <div class="form__row form__row--controls">

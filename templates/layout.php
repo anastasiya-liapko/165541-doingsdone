@@ -9,13 +9,15 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?= isset($errors) ? "overlay" : "" ?> <?= isset($_SESSION["user"]) || isset($_GET["signup"]) ? "" : "body-background" ?>">
+<body class="<?= isset($errors) ? "overlay" : "" ?>
+ <?= isset($_SESSION["user"]) || isset($_GET["signup"]) ? "" : "body-background" ?>">
 <!--class="overlay"-->
 
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
-    <div class="container <?= isset($_SESSION["user"]) ? "container--with-sidebar" : "" ?> <?= isset($_GET["signup"]) ? "container--with-sidebar" : "" ?>">
+    <div class="container <?= isset($_SESSION["user"]) ? "container--with-sidebar" : ""; ?>
+    <?= isset($_GET["signup"]) ? "container--with-sidebar" : ""; ?>">
         <?php if (isset($_SESSION["user"])): ?>
             <header class="main-header">
                 <a href="#">
@@ -32,7 +34,7 @@
                         </div>
 
                         <div class="user-menu__data">
-                            <p><?= $_SESSION["user"]["name"] ?></p>
+                            <p><?= htmlspecialchars($_SESSION["user"]["name"]); ?></p>
 
                             <a href="index.php?logout">Выйти</a>
                         </div>
@@ -68,11 +70,12 @@
                     <nav class="main-navigation">
                         <ul class="main-navigation__list">
                             <?php foreach ($projects as $item): ?>
-                                <li class="main-navigation__list-item  <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : "" ?>">
+                                <li class="main-navigation__list-item
+                                <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : ""; ?>">
                                     <a class="main-navigation__list-item-link"
-                                       href="index.php?project_id=<?= $item["id"] ?>&all_tasks"><?= $item["name"] ?></a>
+                                       href="index.php?project_id=<?= $item["id"] ?>&all_tasks"><?= htmlspecialchars($item["name"]); ?></a>
                                     <span class="main-navigation__list-item-count"><?= getTasksCountByProjectName($item["name"],
-                                            $tasks) ?></span>
+                                            $tasks); ?></span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -155,9 +158,9 @@
 <script src="script.js"></script>
 
 <div class="form-popup">
-    <?= $autorizationPopup ?>
-    <?= isset($formPopup) ? $formPopup : "" ?>
-    <?= isset($projectPopup) ? $projectPopup : "" ?>
+    <?= $autorizationPopup; ?>
+    <?= isset($formPopup) ? $formPopup : ""; ?>
+    <?= isset($projectPopup) ? $projectPopup : ""; ?>
 </div>
 
 </body>
