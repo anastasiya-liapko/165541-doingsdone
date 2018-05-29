@@ -13,7 +13,7 @@ $selectedProjectId = isset($_GET["project_id"]) ? intval($_GET["project_id"]) : 
 $existsProjects = array_filter(
     $projects,
     function ($project) use ($selectedProjectId) {
-        return $project["id"] == $selectedProjectId;
+        return (int)$project["id"] === $selectedProjectId;
     }
 );
 

@@ -72,7 +72,7 @@
                         <?php if (isset($projects)): ?>
                             <?php foreach ($projects as $item): ?>
                                 <li class="main-navigation__list-item
-                                <?= $item["id"] == $selectedProjectId ? "main-navigation__list-item--active" : ""; ?>">
+                                <?= (int)$item["id"] === $selectedProjectId ? "main-navigation__list-item--active" : ""; ?>">
                                     <a class="main-navigation__list-item-link"
                                        href="index.php?project_id=<?= $item["id"] ?>&all_tasks"><?= htmlspecialchars($item["name"]); ?></a>
                                     <span class="main-navigation__list-item-count"><?= getTasksCountByProjectName($item["name"],
