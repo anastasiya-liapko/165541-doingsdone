@@ -29,7 +29,7 @@
             <!--добавить сюда аттрибут "checked", если переменная $show_complete_tasks равна единице-->
             <input class="checkbox__input visually-hidden show_completed" type="checkbox"
                    value="<?= $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>"
-                   <?= $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>>
+                <?= $_COOKIE["showCompleteTasks"] == 1 ? "checked" : ""; ?>>
             <span class="checkbox__text">Показывать выполненные</span>
         </label>
     </div>
@@ -43,8 +43,7 @@
                         <td class="task__select">
                             <label class="checkbox task__checkbox">
                                 <input class="checkbox__input visually-hidden task__checkbox"
-                                       name="<?= $item["project_id"] ?>" type="checkbox" value="<?= $item["id"]; ?>"
-                                       <?= isset($_COOKIE[$item["id"]]) && $_COOKIE[$item["id"]] == 1 ? "checked" : ""; ?>>
+                                       name="<?= $item["project_id"]; ?>" type="checkbox" value="<?= $item["id"]; ?>">
                                 <span class="checkbox__text"><?= htmlspecialchars($item["name"]); ?></span>
                             </label>
                         </td>

@@ -25,7 +25,7 @@
 
             <select class="form__input form__input--select <?= $classname; ?>" name="project" id="project">
                 <?php foreach ($projects as $i => $item): ?>
-                    <option value="<?= $item["id"] ?>"><?= $item["name"] == "Входящие" ? "" : $item["name"]; ?></option>
+                    <option value="<?= $item["id"] ?>"><?= htmlspecialchars($item["name"] == "Входящие" ? "" : $item["name"]); ?></option>
                 <?php endforeach; ?>
             </select>
 

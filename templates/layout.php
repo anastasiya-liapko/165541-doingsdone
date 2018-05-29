@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body class="<?= isset($errors) ? "overlay" : ""; ?>
-<?= isset($_SESSION["user"]) || isset($_GET["signup"]) ? "" : "body-background"; ?>">
+<body class="<?= isset($errors) ? "overlay" : "" ?>
+ <?= isset($_SESSION["user"]) || isset($_GET["signup"]) ? "" : "body-background" ?>">
 <!--class="overlay"-->
 
 <h1 class="visually-hidden">Дела в порядке</h1>
