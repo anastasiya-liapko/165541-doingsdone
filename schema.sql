@@ -33,6 +33,7 @@ CREATE TABLE `tasks` (
     `term_date` DATETIME DEFAULT NULL,
     `project_id` INT DEFAULT NULL,
     `user_id` INT NOT NULL,
+    FULLTEXT (`name`),
     FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,

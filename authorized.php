@@ -1,4 +1,7 @@
 <?php
+require_once "init.php";
+require_once "mysql_helper.php";
+
 $userId = $_SESSION["user"]["id"];
 $projects = getProjectsListForUser($link, $userId);
 $projects = array_merge([["name" => "Входящие", "id" => $userId]], $projects);
@@ -30,3 +33,5 @@ if (empty($existsProjects)) {
         ]
     );
 }
+
+include "search.php";

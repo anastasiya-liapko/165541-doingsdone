@@ -442,6 +442,41 @@ function getProjectsListForUser($databaseLink, int $userId)
 ;
 
 /**
+ * Возвращает список искомых задач
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @param int $userId Id пользователя
+ * @return array список задач
+ */
+function getSearchTasks($databaseLink, int $userId): array
+{
+    $search = $_GET["search"] ?? "";
+    $searchTasks = [];
+
+    if ($search) {
+        $sql = "
+            SELECT
+                *
+            FROM
+                `tasks`
+            WHERE
+                `user_id` = $userId
+            AND
+            MATCH(`name`) AGAINST(?)
+        ";
+
+        $stmt = db_get_prepare_stmt($databaseLink, $sql, [$search]);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        $searchTasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    }
+    return $searchTasks;
+}
+
+;
+
+/**
  * Возвращает количество задач по имени проекта
  *
  * @param array $tasks Массив задач (строк)
