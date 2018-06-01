@@ -10,6 +10,7 @@ if (isset($_POST["autorization"])) {
             ["formsData" => $data, "errors" => $errors]);
         $content = includeTemplate("templates/guest.php", []);
     } else {
+        include "notify.php";
         header("Location: index.php?project_id=0&all_tasks");
     }
 }

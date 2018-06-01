@@ -11,8 +11,6 @@ if (!isset($_SESSION["user"])) {
     include "authorized.php";
 }
 
-// include "notify.php";
-
 $layoutContentParameters = [
     "content" => $content,
     "title" => "Дела в порядке"
