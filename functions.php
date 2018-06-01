@@ -347,6 +347,7 @@ function getFilteredTasks(array $userTasks, int $userId, int $selectedProjectId)
  */
 function getHoursCountTillTheDate($date)
 {
+    date_default_timezone_set('Europe/Moscow');
     if ($date !== null) {
         $ts = time();
         $endTs = strtotime($date);
@@ -641,6 +642,46 @@ function getTomorrowTasks(array $userTasks): array
     }
 
     return $tomorrowTasks;
+}
+
+;
+
+/**
+ * Возвращает список предстоящих задач
+ *
+ * @param $databaseLink Ссылка на базу данных
+ * @return array Массив задач
+ */
+function getUpcomingTasks($databaseLink)
+{
+    mysqli_query($databaseLink, "SET time_zone = 'Europe/Moscow'");
+    $upcomingTasks = [];
+
+    $sql = "
+        SELECT
+            `tasks`.`name` `task_name`,
+            `tasks`.`term_date`,
+            `users`.`name` `user_name`,
+            `users`.`email` `user_email`
+        FROM
+            `tasks`
+        JOIN
+            `users` ON `tasks`.`user_id` = `users`.`id`
+        WHERE
+            `tasks`.`completion_date` is null
+        AND
+            `tasks`.`term_date` <= now() + INTERVAL 1 HOUR
+        AND
+            `tasks`.`term_date` > now()
+        ORDER BY
+            `users`.`id` DESC
+    ";
+
+    if ($res = mysqli_query($databaseLink, $sql)) {
+        $upcomingTasks = mysqli_fetch_all($res, MYSQLI_ASSOC);
+    }
+
+    return $upcomingTasks;
 }
 
 ;
