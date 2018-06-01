@@ -6,7 +6,7 @@
     <h2 class="content__main-heading">Список задач</h2>
 
     <form class="search-form" action="index.php" enctype="multipart/form-data" method="get">
-        <input class="search-form__input" type="text" name="search" value="<?= isset($_GET["search"]); ?>" placeholder="Поиск по задачам">
+        <input class="search-form__input" type="text" name="search" minlength="3" value="" placeholder="Поиск по задачам">
 
         <input class="search-form__submit" type="submit" name="" value="Искать">
     </form>
