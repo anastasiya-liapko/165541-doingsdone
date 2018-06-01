@@ -510,7 +510,7 @@ function getTasksListByProjectId(array $userTasks, int $userId, int $projectId):
 {
     $tasksByProject = [];
 
-    if ($projectId === $userId) {
+    if ($projectId === 0) {
         $tasksByProject = array_filter(
             $userTasks,
             function ($task) use ($projectId) {

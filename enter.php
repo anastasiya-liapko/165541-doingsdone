@@ -10,7 +10,6 @@ if (isset($_POST["autorization"])) {
             ["formsData" => $data, "errors" => $errors]);
         $content = includeTemplate("templates/guest.php", []);
     } else {
-        $projectId = $user[0]["id"];
-        header("Location: index.php?project_id=$projectId&all_tasks");
+        header("Location: index.php?project_id=0&all_tasks");
     }
 }
