@@ -451,7 +451,7 @@ function getProjectsListForUser($databaseLink, int $userId)
  */
 function getSearchTasks($databaseLink, int $userId): array
 {
-    $search = $_GET["search"] ?? "";
+    $search = $_GET["search"];
     $searchTasks = [];
 
     if ($search) {

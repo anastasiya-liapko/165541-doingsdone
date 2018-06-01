@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Europe/Moscow');
 require_once "vendor/autoload.php";
 require_once "init.php";
 require_once "functions.php";
@@ -9,6 +10,8 @@ if (!isset($_SESSION["user"])) {
 } else {
     include "authorized.php";
 }
+
+// include "notify.php";
 
 $layoutContentParameters = [
     "content" => $content,
