@@ -1,0 +1,12 @@
+{
+    "name": "anastasia/165541-doingsdone",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "anastasiya-liapko",
+            "email": "anastasiya.liapko@gmail.com"
+        }
+    ],
+    "require": {}
+}

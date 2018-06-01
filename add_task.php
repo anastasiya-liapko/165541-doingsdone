@@ -1,7 +1,7 @@
 <?php
 $data = $_POST;
 $errors = checkTasksFormOnErrors($data);
-$data["project"] === $userId ? $data["project"] = null : $data["project"];
+$data["project"] === '0' ? $data["project"] = null : $data["project"];
 $data["date"] === "" ? $data["date"] = null : $data["date"];
 $data["file"] = getFile();
 if (count($errors)) {
@@ -14,7 +14,7 @@ if (count($errors)) {
         ]
     );
 } else {
-    isset($data["project"]) ? $projectId = (int)$data["project"] : $projectId = $userId;
+    isset($data["project"]) ? $projectId = (int)$data["project"] : $projectId = 0;
     $addNewTask = addNewTask($link, $data, $userId);
     if ($addNewTask) {
         header("Location: index.php?project_id=$projectId&all_tasks&success=true");
